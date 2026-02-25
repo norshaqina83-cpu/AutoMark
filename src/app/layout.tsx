@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Next.js Template",
-  description: "A minimal Next.js starter template",
+  title: "RFID Attendance System",
+  description: "Digital attendance management system using RFID technology",
 };
 
 export default function RootLayout({
