@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Navbar from "@/components/layout/Navbar";
+import AuthGuard from "@/components/AuthGuard";
 import { students as initialStudents, Student, classes } from "@/lib/data";
 
 export default function StudentsPage() {
@@ -57,6 +58,7 @@ export default function StudentsPage() {
   });
 
   return (
+    <AuthGuard allowedRoles={["admin", "teacher"]}>
     <div className="min-h-screen bg-slate-950 text-white">
       <Navbar />
 
@@ -306,5 +308,6 @@ export default function StudentsPage() {
         </div>
       </main>
     </div>
+    </AuthGuard>
   );
 }

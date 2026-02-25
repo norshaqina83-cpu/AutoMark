@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react";
 import Navbar from "@/components/layout/Navbar";
+import AuthGuard from "@/components/AuthGuard";
 import { attendanceRecords, students, classes, AttendanceRecord } from "@/lib/data";
 
 export default function TeacherPage() {
@@ -61,6 +62,7 @@ export default function TeacherPage() {
   const absentCount = filteredRecords.filter((r) => r.status === "absent").length;
 
   return (
+    <AuthGuard allowedRoles={["admin", "teacher"]}>
     <div className="min-h-screen bg-slate-950 text-white">
       <Navbar />
 
@@ -274,5 +276,6 @@ export default function TeacherPage() {
         )}
       </main>
     </div>
+    </AuthGuard>
   );
 }

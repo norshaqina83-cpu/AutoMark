@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
+import AuthGuard from "@/components/AuthGuard";
 import { students, attendanceRecords } from "@/lib/data";
 
 export default function Home() {
@@ -21,6 +22,7 @@ export default function Home() {
     .slice(0, 5);
 
   return (
+    <AuthGuard allowedRoles={["admin"]}>
     <div className="min-h-screen bg-slate-950 text-white">
       <Navbar />
 
@@ -205,5 +207,6 @@ export default function Home() {
         </div>
       </main>
     </div>
+    </AuthGuard>
   );
 }

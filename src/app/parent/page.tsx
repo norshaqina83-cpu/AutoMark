@@ -2,10 +2,20 @@
 
 import { useState } from "react";
 import Navbar from "@/components/layout/Navbar";
+import AuthGuard from "@/components/AuthGuard";
+import { useAuth } from "@/lib/auth";
 import { students, attendanceRecords } from "@/lib/data";
 
-export default function ParentPage() {
-  const [selectedStudentId, setSelectedStudentId] = useState(students[0].studentId);
+function ParentPortalContent() {
+  const { user } = useAuth();
+
+  // Admins can select any student; parents are locked to their linked child
+  const isAdmin = user?.role === "admin";
+  const defaultStudentId = isAdmin
+    ? students[0].studentId
+    : (user?.linkedStudentId ?? students[0].studentId);
+
+  const [selectedStudentId, setSelectedStudentId] = useState(defaultStudentId);
 
   const selectedStudent = students.find((s) => s.studentId === selectedStudentId)!;
   const studentRecords = attendanceRecords
@@ -43,21 +53,31 @@ export default function ParentPage() {
           </p>
         </div>
 
-        {/* Student Selector */}
-        <div className="bg-slate-800 rounded-xl p-5 border border-slate-700 mb-6">
-          <label className="block text-slate-400 text-sm mb-2">Select Your Child</label>
-          <select
-            value={selectedStudentId}
-            onChange={(e) => setSelectedStudentId(e.target.value)}
-            className="bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 w-full max-w-sm"
-          >
-            {students.map((s) => (
-              <option key={s.studentId} value={s.studentId}>
-                {s.name} — Class {s.class}
-              </option>
-            ))}
-          </select>
-        </div>
+        {/* Student Selector — only admins can switch students */}
+        {isAdmin ? (
+          <div className="bg-slate-800 rounded-xl p-5 border border-slate-700 mb-6">
+            <label className="block text-slate-400 text-sm mb-2">Select Student (Admin View)</label>
+            <select
+              value={selectedStudentId}
+              onChange={(e) => setSelectedStudentId(e.target.value)}
+              className="bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 w-full max-w-sm"
+            >
+              {students.map((s) => (
+                <option key={s.studentId} value={s.studentId}>
+                  {s.name} — Class {s.class}
+                </option>
+              ))}
+            </select>
+          </div>
+        ) : (
+          <div className="bg-slate-800 rounded-xl p-5 border border-slate-700 mb-6">
+            <p className="text-slate-400 text-sm mb-1">Viewing attendance for</p>
+            <p className="text-white font-semibold text-lg">{selectedStudent?.name}</p>
+            <p className="text-slate-500 text-xs mt-0.5">
+              Class {selectedStudent?.class} · {selectedStudent?.studentId}
+            </p>
+          </div>
+        )}
 
         {/* Student Info Card */}
         <div className="bg-slate-800 rounded-xl p-6 border border-slate-700 mb-6">
@@ -220,5 +240,13 @@ export default function ParentPage() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function ParentPage() {
+  return (
+    <AuthGuard allowedRoles={["parent", "admin"]}>
+      <ParentPortalContent />
+    </AuthGuard>
   );
 }

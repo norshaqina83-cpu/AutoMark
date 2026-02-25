@@ -2,7 +2,7 @@
 
 ## Current State
 
-**Project Status**: ✅ RFID Attendance System — Fully Built
+**Project Status**: ✅ RFID Attendance System — Fully Built + Role-Based Auth
 
 A complete digital attendance management system using RFID technology (RC522 reader). The system supports teachers, parents, and administrators with role-appropriate access.
 
@@ -14,6 +14,13 @@ A complete digital attendance management system using RFID technology (RC522 rea
 - [x] ESLint configuration
 - [x] Memory bank documentation
 - [x] Recipe system for common features
+- [x] **Role-Based Authentication** — login page, AuthProvider, AuthGuard:
+  - [x] Login page (`/login`) with account selector + password
+  - [x] `src/lib/auth.tsx` — AuthContext, mock users (admin/teacher/parent)
+  - [x] `src/components/AuthGuard.tsx` — role-based route protection
+  - [x] Navbar updated with role-specific links + logout button
+  - [x] Each page wrapped with AuthGuard + correct allowed roles
+  - [x] Parents locked to their own child's data only
 - [x] **RFID Attendance System** — full implementation:
   - [x] Dashboard (`/`) — real-time stats, recent scans, quick access portals
   - [x] Teacher Portal (`/teacher`) — view/filter attendance, edit records, mark absent
@@ -70,3 +77,4 @@ A complete digital attendance management system using RFID technology (RC522 rea
 |------|---------|
 | Initial | Template created with base setup |
 | 2026-02-25 | Full RFID attendance system built — 5 pages, 2 API routes, shared data layer |
+| 2026-02-25 | Role-based auth added — login page, AuthProvider, AuthGuard, role-specific nav |

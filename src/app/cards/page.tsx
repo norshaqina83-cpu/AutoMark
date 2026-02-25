@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Navbar from "@/components/layout/Navbar";
+import AuthGuard from "@/components/AuthGuard";
 import { students as initialStudents, Student } from "@/lib/data";
 
 export default function CardsPage() {
@@ -49,6 +50,7 @@ export default function CardsPage() {
   const inactiveCount = students.filter((s) => s.rfidStatus === "inactive").length;
 
   return (
+    <AuthGuard allowedRoles={["admin", "teacher"]}>
     <div className="min-h-screen bg-slate-950 text-white">
       <Navbar />
 
@@ -261,5 +263,6 @@ export default function CardsPage() {
         </div>
       </main>
     </div>
+    </AuthGuard>
   );
 }
