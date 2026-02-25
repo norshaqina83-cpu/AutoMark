@@ -1,10 +1,10 @@
-# Active Context: Next.js Starter Template
+# Active Context: RFID Digital Attendance System
 
 ## Current State
 
-**Template Status**: ✅ Ready for development
+**Project Status**: ✅ RFID Attendance System — Fully Built
 
-The template is a clean Next.js 16 starter with TypeScript and Tailwind CSS 4. It's ready for AI-assisted expansion to build any type of application.
+A complete digital attendance management system using RFID technology (RC522 reader). The system supports teachers, parents, and administrators with role-appropriate access.
 
 ## Recently Completed
 
@@ -14,74 +14,59 @@ The template is a clean Next.js 16 starter with TypeScript and Tailwind CSS 4. I
 - [x] ESLint configuration
 - [x] Memory bank documentation
 - [x] Recipe system for common features
+- [x] **RFID Attendance System** — full implementation:
+  - [x] Dashboard (`/`) — real-time stats, recent scans, quick access portals
+  - [x] Teacher Portal (`/teacher`) — view/filter attendance, edit records, mark absent
+  - [x] RFID Card Manager (`/cards`) — activate/deactivate/renew cards
+  - [x] Parent Portal (`/parent`) — view-only attendance history, alerts
+  - [x] Student Registry (`/students`) — RFID tag ↔ student mapping, register students
+  - [x] API: `/api/attendance` (GET/POST/PATCH)
+  - [x] API: `/api/cards` (GET/POST/PATCH)
+  - [x] Shared data layer `src/lib/data.ts`
+  - [x] Navbar component with active route highlighting
 
 ## Current Structure
 
 | File/Directory | Purpose | Status |
 |----------------|---------|--------|
-| `src/app/page.tsx` | Home page | ✅ Ready |
+| `src/app/page.tsx` | Main dashboard | ✅ Ready |
 | `src/app/layout.tsx` | Root layout | ✅ Ready |
 | `src/app/globals.css` | Global styles | ✅ Ready |
+| `src/app/teacher/page.tsx` | Teacher portal | ✅ Ready |
+| `src/app/cards/page.tsx` | RFID card manager | ✅ Ready |
+| `src/app/parent/page.tsx` | Parent portal (view-only) | ✅ Ready |
+| `src/app/students/page.tsx` | Student registry | ✅ Ready |
+| `src/app/api/attendance/route.ts` | Attendance API | ✅ Ready |
+| `src/app/api/cards/route.ts` | RFID card API | ✅ Ready |
+| `src/components/layout/Navbar.tsx` | Navigation bar | ✅ Ready |
+| `src/lib/data.ts` | Mock data store | ✅ Ready |
 | `.kilocode/` | AI context & recipes | ✅ Ready |
 
-## Current Focus
+## System Features
 
-The template is ready. Next steps depend on user requirements:
+### Hardware Integration
+- RC522 RFID reader at classroom entrance
+- Green LED = successful scan
+- Red LED = card inactive or unknown
+- Buzzer = confirmation on successful scan
+- API endpoint `/api/attendance` (POST) handles scan events
 
-1. What type of application to build
-2. What features are needed
-3. Design/branding preferences
+### User Roles
+| Role | Access | Pages |
+|------|--------|-------|
+| Teacher/Admin | Full read + write | `/teacher`, `/cards`, `/students` |
+| Parent | View-only | `/parent` |
+| System (RFID) | POST scans | `/api/attendance` |
 
-## Quick Start Guide
-
-### To add a new page:
-
-Create a file at `src/app/[route]/page.tsx`:
-```tsx
-export default function NewPage() {
-  return <div>New page content</div>;
-}
-```
-
-### To add components:
-
-Create `src/components/` directory and add components:
-```tsx
-// src/components/ui/Button.tsx
-export function Button({ children }: { children: React.ReactNode }) {
-  return <button className="px-4 py-2 bg-blue-600 text-white rounded">{children}</button>;
-}
-```
-
-### To add a database:
-
-Follow `.kilocode/recipes/add-database.md`
-
-### To add API routes:
-
-Create `src/app/api/[route]/route.ts`:
-```tsx
-import { NextResponse } from "next/server";
-
-export async function GET() {
-  return NextResponse.json({ message: "Hello" });
-}
-```
-
-## Available Recipes
-
-| Recipe | File | Use Case |
-|--------|------|----------|
-| Add Database | `.kilocode/recipes/add-database.md` | Data persistence with Drizzle + SQLite |
-
-## Pending Improvements
-
-- [ ] Add more recipes (auth, email, etc.)
-- [ ] Add example components
-- [ ] Add testing setup recipe
+### Key Workflows
+1. **Student scans card** → RC522 reads RFID tag → POST `/api/attendance` → attendance recorded
+2. **Teacher views attendance** → `/teacher` → filter by class/date → edit if needed
+3. **Card lost** → Teacher goes to `/cards` → deactivates card → student pays fee → reactivate
+4. **Parent monitors** → `/parent` → select child → view history + alerts
 
 ## Session History
 
 | Date | Changes |
 |------|---------|
 | Initial | Template created with base setup |
+| 2026-02-25 | Full RFID attendance system built — 5 pages, 2 API routes, shared data layer |
