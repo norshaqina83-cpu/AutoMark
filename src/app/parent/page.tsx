@@ -4,7 +4,7 @@ import { useState } from "react";
 import Navbar from "@/components/layout/Navbar";
 import AuthGuard from "@/components/AuthGuard";
 import { useAuth } from "@/lib/auth";
-import { students, attendanceRecords } from "@/lib/data";
+import { students, attendanceRecords, AttendanceRecord } from "@/lib/data";
 
 function ParentPortalContent() {
   const { user } = useAuth();
@@ -16,9 +16,15 @@ function ParentPortalContent() {
     : (user?.linkedStudentId ?? students[0].studentId);
 
   const [selectedStudentId, setSelectedStudentId] = useState(defaultStudentId);
+  const [records, setRecords] = useState<AttendanceRecord[]>([...attendanceRecords]);
+
+  // Absence reason editing state
+  const [editingReasonId, setEditingReasonId] = useState<string | null>(null);
+  const [reasonDraft, setReasonDraft] = useState("");
+  const [reasonSaved, setReasonSaved] = useState("");
 
   const selectedStudent = students.find((s) => s.studentId === selectedStudentId)!;
-  const studentRecords = attendanceRecords
+  const studentRecords = records
     .filter((r) => r.studentId === selectedStudentId)
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
@@ -28,6 +34,20 @@ function ParentPortalContent() {
   const totalDays = studentRecords.length;
   const attendanceRate =
     totalDays > 0 ? Math.round(((presentCount + lateCount) / totalDays) * 100) : 0;
+
+  const handleStartEditReason = (record: AttendanceRecord) => {
+    setEditingReasonId(record.id);
+    setReasonDraft(record.absentReason ?? "");
+  };
+
+  const handleSaveReason = (id: string) => {
+    setRecords((prev) =>
+      prev.map((r) => (r.id === id ? { ...r, absentReason: reasonDraft.trim() } : r))
+    );
+    setEditingReasonId(null);
+    setReasonSaved("✅ Absence reason submitted. The teacher has been notified.");
+    setTimeout(() => setReasonSaved(""), 4000);
+  };
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
@@ -40,16 +60,16 @@ function ParentPortalContent() {
             <span>👨‍👩‍👧</span> Parent Portal
           </h1>
           <p className="text-slate-400 mt-1">
-            Monitor your child&apos;s attendance. View-only access — contact the teacher to make corrections.
+            Monitor your child&apos;s attendance and submit absence reasons.
           </p>
         </div>
 
-        {/* View-only notice */}
+        {/* Info notice */}
         <div className="mb-6 p-3 bg-blue-950/50 border border-blue-700/50 rounded-lg flex items-center gap-3">
-          <span className="text-blue-400">🔒</span>
+          <span className="text-blue-400">ℹ️</span>
           <p className="text-blue-300 text-sm">
-            <strong>View-only access.</strong> You can monitor attendance but cannot edit records.
-            Please contact your child&apos;s teacher if you believe there is an error.
+            You can view attendance records and submit a reason for any absence. Teachers and
+            administrators will be able to see your submitted reasons.
           </p>
         </div>
 
@@ -148,7 +168,7 @@ function ParentPortalContent() {
               <p className="text-red-300 font-medium">Absence Alert</p>
               <p className="text-red-400 text-sm mt-0.5">
                 {selectedStudent.name} has been absent {absentCount} time
-                {absentCount !== 1 ? "s" : ""}. Please contact the school if this is unexpected.
+                {absentCount !== 1 ? "s" : ""}. You can submit a reason for each absence below.
               </p>
             </div>
           </div>
@@ -168,11 +188,20 @@ function ParentPortalContent() {
           </div>
         )}
 
+        {/* Reason saved message */}
+        {reasonSaved && (
+          <div className="mb-4 p-3 bg-green-900/50 border border-green-700 rounded-lg text-green-300 text-sm">
+            {reasonSaved}
+          </div>
+        )}
+
         {/* Attendance History */}
         <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
           <div className="px-6 py-4 border-b border-slate-700">
             <h2 className="text-white font-semibold">Attendance History</h2>
-            <p className="text-slate-500 text-xs mt-0.5">All recorded attendance entries</p>
+            <p className="text-slate-500 text-xs mt-0.5">
+              Click &quot;Add Reason&quot; on any absent record to submit an explanation
+            </p>
           </div>
 
           {studentRecords.length === 0 ? (
@@ -181,62 +210,103 @@ function ParentPortalContent() {
               <p>No attendance records found for this student.</p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-slate-700 bg-slate-900/50">
-                    <th className="text-left px-6 py-3 text-slate-400 text-sm font-medium">Date</th>
-                    <th className="text-left px-6 py-3 text-slate-400 text-sm font-medium">Class</th>
-                    <th className="text-left px-6 py-3 text-slate-400 text-sm font-medium">Scan Time</th>
-                    <th className="text-left px-6 py-3 text-slate-400 text-sm font-medium">Status</th>
-                    <th className="text-left px-6 py-3 text-slate-400 text-sm font-medium">Note</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {studentRecords.map((record) => (
-                    <tr
-                      key={record.id}
-                      className="border-b border-slate-700/50 hover:bg-slate-700/20 transition-colors"
-                    >
-                      <td className="px-6 py-4 text-white text-sm">{record.date}</td>
-                      <td className="px-6 py-4 text-slate-400 text-sm">Class {record.class}</td>
-                      <td className="px-6 py-4 text-slate-400 text-sm">
-                        {record.time || <span className="text-slate-600">No scan</span>}
-                      </td>
-                      <td className="px-6 py-4">
-                        <span
-                          className={`text-xs px-2.5 py-1 rounded-full font-medium ${
-                            record.status === "present"
-                              ? "bg-green-900 text-green-300"
-                              : record.status === "late"
-                              ? "bg-yellow-900 text-yellow-300"
-                              : "bg-red-900 text-red-300"
-                          }`}
-                        >
-                          {record.status.charAt(0).toUpperCase() + record.status.slice(1)}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-slate-500 text-xs">
-                        {record.correctedBy ? `Corrected by ${record.correctedBy}` : "—"}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="divide-y divide-slate-700/50">
+              {studentRecords.map((record) => (
+                <div key={record.id} className="px-6 py-4 hover:bg-slate-700/20 transition-colors">
+                  <div className="flex items-start justify-between gap-4 flex-wrap">
+                    {/* Left: date + status */}
+                    <div className="flex items-center gap-4">
+                      <div>
+                        <p className="text-white text-sm font-medium">{record.date}</p>
+                        <p className="text-slate-500 text-xs">
+                          Class {record.class}
+                          {record.time ? ` · Scanned at ${record.time}` : " · No scan"}
+                        </p>
+                      </div>
+                      <span
+                        className={`text-xs px-2.5 py-1 rounded-full font-medium ${
+                          record.status === "present"
+                            ? "bg-green-900 text-green-300"
+                            : record.status === "late"
+                            ? "bg-yellow-900 text-yellow-300"
+                            : "bg-red-900 text-red-300"
+                        }`}
+                      >
+                        {record.status.charAt(0).toUpperCase() + record.status.slice(1)}
+                      </span>
+                    </div>
+
+                    {/* Right: action (only for absent records) */}
+                    {record.status === "absent" && editingReasonId !== record.id && (
+                      <button
+                        onClick={() => handleStartEditReason(record)}
+                        className="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded text-xs font-medium transition-colors shrink-0"
+                      >
+                        {record.absentReason ? "✏️ Edit Reason" : "📝 Add Reason"}
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Absence reason display / edit */}
+                  {record.status === "absent" && (
+                    <div className="mt-3">
+                      {editingReasonId === record.id ? (
+                        <div className="space-y-2">
+                          <textarea
+                            value={reasonDraft}
+                            onChange={(e) => setReasonDraft(e.target.value)}
+                            placeholder="Explain the reason for absence (e.g. sick, family emergency, doctor appointment)…"
+                            rows={3}
+                            className="w-full bg-slate-900 border border-blue-500 text-white rounded-lg px-4 py-2.5 text-sm focus:outline-none resize-none placeholder-slate-500"
+                          />
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => handleSaveReason(record.id)}
+                              className="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs font-medium transition-colors"
+                            >
+                              Submit Reason
+                            </button>
+                            <button
+                              onClick={() => setEditingReasonId(null)}
+                              className="px-4 py-1.5 bg-slate-600 hover:bg-slate-500 text-white rounded text-xs font-medium transition-colors"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </div>
+                      ) : record.absentReason ? (
+                        <div className="flex items-start gap-2 p-3 bg-blue-950/40 border border-blue-700/40 rounded-lg">
+                          <span className="text-blue-400 text-sm mt-0.5">💬</span>
+                          <div>
+                            <p className="text-blue-300 text-xs font-medium mb-0.5">Reason submitted by parent:</p>
+                            <p className="text-slate-300 text-sm">{record.absentReason}</p>
+                          </div>
+                        </div>
+                      ) : (
+                        <p className="text-slate-600 text-xs italic">No reason submitted yet.</p>
+                      )}
+
+                      {/* Teacher note (read-only for parents) */}
+                      {record.teacherNote && (
+                        <div className="mt-2 flex items-start gap-2 p-3 bg-purple-950/40 border border-purple-700/40 rounded-lg">
+                          <span className="text-purple-400 text-sm mt-0.5">📌</span>
+                          <div>
+                            <p className="text-purple-300 text-xs font-medium mb-0.5">Teacher note:</p>
+                            <p className="text-slate-300 text-sm">{record.teacherNote}</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Corrected by note */}
+                  {record.correctedBy && (
+                    <p className="mt-2 text-yellow-500 text-xs">✏️ Corrected by {record.correctedBy}</p>
+                  )}
+                </div>
+              ))}
             </div>
           )}
-        </div>
-
-        {/* Contact Info */}
-        <div className="mt-6 bg-slate-800 border border-slate-700 rounded-xl p-4 flex items-start gap-3">
-          <span className="text-slate-400 text-xl mt-0.5">📞</span>
-          <div>
-            <p className="text-slate-300 font-medium text-sm">Need to report an issue?</p>
-            <p className="text-slate-500 text-xs mt-0.5">
-              If you believe there is an error in the attendance record, please contact your child&apos;s
-              class teacher directly. Only teachers and administrators can make corrections to the system.
-            </p>
-          </div>
         </div>
       </main>
     </div>

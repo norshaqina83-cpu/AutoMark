@@ -2,7 +2,7 @@
 
 ## Current State
 
-**Project Status**: ✅ RFID Attendance System — Fully Built + Role-Based Auth
+**Project Status**: ✅ RFID Attendance System — Fully Built + Role-Based Auth + Advanced Features
 
 A complete digital attendance management system using RFID technology (RC522 reader). The system supports teachers, parents, and administrators with role-appropriate access.
 
@@ -15,8 +15,8 @@ A complete digital attendance management system using RFID technology (RC522 rea
 - [x] Memory bank documentation
 - [x] Recipe system for common features
 - [x] **Role-Based Authentication** — login page, AuthProvider, AuthGuard:
-  - [x] Login page (`/login`) with account selector + password
-  - [x] `src/lib/auth.tsx` — AuthContext, mock users (admin/teacher/parent)
+  - [x] Login page (`/login`) with ID number input + password (no dropdown)
+  - [x] `src/lib/auth.tsx` — AuthContext, mock users with `idNumber` field (ADM001, TCH001, PAR001–PAR006)
   - [x] `src/components/AuthGuard.tsx` — role-based route protection
   - [x] Navbar updated with role-specific links + logout button
   - [x] Each page wrapped with AuthGuard + correct allowed roles
@@ -25,28 +25,38 @@ A complete digital attendance management system using RFID technology (RC522 rea
   - [x] Dashboard (`/`) — real-time stats, recent scans, quick access portals
   - [x] Teacher Portal (`/teacher`) — view/filter attendance, edit records, mark absent
   - [x] RFID Card Manager (`/cards`) — activate/deactivate/renew cards
-  - [x] Parent Portal (`/parent`) — view-only attendance history, alerts
+  - [x] Parent Portal (`/parent`) — attendance history, absence reason submission
   - [x] Student Registry (`/students`) — RFID tag ↔ student mapping, register students
-  - [x] API: `/api/attendance` (GET/POST/PATCH)
+  - [x] API: `/api/attendance` (GET/POST/PATCH/PUT)
   - [x] API: `/api/cards` (GET/POST/PATCH)
   - [x] Shared data layer `src/lib/data.ts`
   - [x] Navbar component with active route highlighting
+- [x] **Advanced Attendance Features**:
+  - [x] Configurable time thresholds: `lateAfter` (default 07:00) and `absentAfter` (default 12:30)
+  - [x] Admin dashboard time settings panel — adjust cutoff times in-browser
+  - [x] `attendanceSettings` exported from `data.ts`, used by API and dashboard
+  - [x] Parent portal: submit absence reason per absent record (editable)
+  - [x] Teacher portal: view parent-submitted absence reasons + add/edit teacher notes
+  - [x] `absentReason` and `teacherNote` fields added to `AttendanceRecord` type
 
 ## Current Structure
 
 | File/Directory | Purpose | Status |
 |----------------|---------|--------|
-| `src/app/page.tsx` | Main dashboard | ✅ Ready |
+| `src/app/page.tsx` | Admin dashboard + time settings | ✅ Ready |
 | `src/app/layout.tsx` | Root layout | ✅ Ready |
 | `src/app/globals.css` | Global styles | ✅ Ready |
-| `src/app/teacher/page.tsx` | Teacher portal | ✅ Ready |
+| `src/app/login/page.tsx` | Login with ID number input | ✅ Ready |
+| `src/app/teacher/page.tsx` | Teacher portal + notes | ✅ Ready |
 | `src/app/cards/page.tsx` | RFID card manager | ✅ Ready |
-| `src/app/parent/page.tsx` | Parent portal (view-only) | ✅ Ready |
+| `src/app/parent/page.tsx` | Parent portal + absence reasons | ✅ Ready |
 | `src/app/students/page.tsx` | Student registry | ✅ Ready |
-| `src/app/api/attendance/route.ts` | Attendance API | ✅ Ready |
+| `src/app/api/attendance/route.ts` | Attendance API (GET/POST/PATCH/PUT) | ✅ Ready |
 | `src/app/api/cards/route.ts` | RFID card API | ✅ Ready |
 | `src/components/layout/Navbar.tsx` | Navigation bar | ✅ Ready |
-| `src/lib/data.ts` | Mock data store | ✅ Ready |
+| `src/components/AuthGuard.tsx` | Role-based route protection | ✅ Ready |
+| `src/lib/auth.tsx` | Auth context + ID-based login | ✅ Ready |
+| `src/lib/data.ts` | Mock data store + settings | ✅ Ready |
 | `.kilocode/` | AI context & recipes | ✅ Ready |
 
 ## System Features
@@ -58,18 +68,29 @@ A complete digital attendance management system using RFID technology (RC522 rea
 - Buzzer = confirmation on successful scan
 - API endpoint `/api/attendance` (POST) handles scan events
 
-### User Roles
-| Role | Access | Pages |
-|------|--------|-------|
-| Teacher/Admin | Full read + write | `/teacher`, `/cards`, `/students` |
-| Parent | View-only | `/parent` |
-| System (RFID) | POST scans | `/api/attendance` |
+### Attendance Time Rules
+| Scan Time | Status |
+|-----------|--------|
+| At or before `lateAfter` (07:00) | Present |
+| After `lateAfter`, before `absentAfter` (12:30) | Late |
+| After `absentAfter` or no scan | Absent |
 
-### Key Workflows
-1. **Student scans card** → RC522 reads RFID tag → POST `/api/attendance` → attendance recorded
-2. **Teacher views attendance** → `/teacher` → filter by class/date → edit if needed
-3. **Card lost** → Teacher goes to `/cards` → deactivates card → student pays fee → reactivate
-4. **Parent monitors** → `/parent` → select child → view history + alerts
+Admin can adjust both thresholds from the dashboard.
+
+### User Roles & Login
+Users log in with their **ID number** (e.g. `ADM001`, `TCH001`, `PAR001`) + password.
+
+| Role | ID Format | Access | Pages |
+|------|-----------|--------|-------|
+| Admin | ADM001 | Full read + write + settings | `/`, `/teacher`, `/cards`, `/students`, `/parent` |
+| Teacher | TCH001 | Read + write attendance | `/teacher`, `/cards`, `/students` |
+| Parent | PAR001–PAR006 | View + submit absence reasons | `/parent` (own child only) |
+
+### Absence Reason Workflow
+1. Student is absent → no RFID scan recorded
+2. Parent logs in → `/parent` → clicks "Add Reason" on absent record → submits text
+3. Teacher logs in → `/teacher` → sees parent reason in blue box under absent record
+4. Teacher can add their own note (purple box) visible to both teacher and admin
 
 ## Session History
 
@@ -78,3 +99,4 @@ A complete digital attendance management system using RFID technology (RC522 rea
 | Initial | Template created with base setup |
 | 2026-02-25 | Full RFID attendance system built — 5 pages, 2 API routes, shared data layer |
 | 2026-02-25 | Role-based auth added — login page, AuthProvider, AuthGuard, role-specific nav |
+| 2026-02-25 | ID-based login, configurable time thresholds, absence reasons, teacher notes |

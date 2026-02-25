@@ -12,7 +12,12 @@ export default function TeacherPage() {
   const idCounter = useRef(100);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editStatus, setEditStatus] = useState<"present" | "absent" | "late">("present");
+  const [editNote, setEditNote] = useState("");
   const [saveMessage, setSaveMessage] = useState("");
+
+  // Note editing state (separate from status editing)
+  const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
+  const [noteDraft, setNoteDraft] = useState("");
 
   const filteredRecords = records.filter(
     (r) => r.class === selectedClass && r.date === selectedDate
@@ -28,18 +33,33 @@ export default function TeacherPage() {
   const handleEdit = (record: AttendanceRecord) => {
     setEditingId(record.id);
     setEditStatus(record.status);
+    setEditNote(record.teacherNote ?? "");
   };
 
   const handleSave = (id: string) => {
     setRecords((prev) =>
       prev.map((r) =>
         r.id === id
-          ? { ...r, status: editStatus, correctedBy: "Teacher" }
+          ? { ...r, status: editStatus, correctedBy: "Teacher", teacherNote: editNote.trim() || r.teacherNote }
           : r
       )
     );
     setEditingId(null);
     setSaveMessage("✅ Attendance record updated successfully.");
+    setTimeout(() => setSaveMessage(""), 3000);
+  };
+
+  const handleStartEditNote = (record: AttendanceRecord) => {
+    setEditingNoteId(record.id);
+    setNoteDraft(record.teacherNote ?? "");
+  };
+
+  const handleSaveNote = (id: string) => {
+    setRecords((prev) =>
+      prev.map((r) => (r.id === id ? { ...r, teacherNote: noteDraft.trim() } : r))
+    );
+    setEditingNoteId(null);
+    setSaveMessage("✅ Note saved.");
     setTimeout(() => setSaveMessage(""), 3000);
   };
 
@@ -73,7 +93,7 @@ export default function TeacherPage() {
             <span>👩‍🏫</span> Teacher Portal
           </h1>
           <p className="text-slate-400 mt-1">
-            View and manage class attendance. Correct any RFID scan errors.
+            View and manage class attendance. Correct RFID scan errors and add notes.
           </p>
         </div>
 
@@ -127,7 +147,7 @@ export default function TeacherPage() {
           </div>
         )}
 
-        {/* Attendance Table */}
+        {/* Attendance Records */}
         <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden mb-6">
           <div className="px-6 py-4 border-b border-slate-700 flex items-center justify-between">
             <h2 className="text-white font-semibold">
@@ -142,64 +162,69 @@ export default function TeacherPage() {
               <p>No attendance records for this class and date.</p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-slate-700 bg-slate-900/50">
-                    <th className="text-left px-6 py-3 text-slate-400 text-sm font-medium">Student</th>
-                    <th className="text-left px-6 py-3 text-slate-400 text-sm font-medium">Student ID</th>
-                    <th className="text-left px-6 py-3 text-slate-400 text-sm font-medium">RFID Tag</th>
-                    <th className="text-left px-6 py-3 text-slate-400 text-sm font-medium">Scan Time</th>
-                    <th className="text-left px-6 py-3 text-slate-400 text-sm font-medium">Status</th>
-                    <th className="text-left px-6 py-3 text-slate-400 text-sm font-medium">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredRecords.map((record) => (
-                    <tr
-                      key={record.id}
-                      className="border-b border-slate-700/50 hover:bg-slate-700/30 transition-colors"
-                    >
-                      <td className="px-6 py-4">
-                        <p className="text-white font-medium">{record.studentName}</p>
-                        {record.correctedBy && (
-                          <p className="text-yellow-500 text-xs">✏️ Corrected by {record.correctedBy}</p>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 text-slate-400 text-sm">{record.studentId}</td>
-                      <td className="px-6 py-4 text-slate-400 text-sm font-mono">{record.rfidTag}</td>
-                      <td className="px-6 py-4 text-slate-400 text-sm">
-                        {record.time || <span className="text-slate-600">—</span>}
-                      </td>
-                      <td className="px-6 py-4">
-                        {editingId === record.id ? (
-                          <select
-                            value={editStatus}
-                            onChange={(e) =>
-                              setEditStatus(e.target.value as "present" | "absent" | "late")
-                            }
-                            className="bg-slate-900 border border-blue-500 text-white rounded px-2 py-1 text-sm"
-                          >
-                            <option value="present">Present</option>
-                            <option value="late">Late</option>
-                            <option value="absent">Absent</option>
-                          </select>
-                        ) : (
-                          <span
-                            className={`text-xs px-2.5 py-1 rounded-full font-medium ${
-                              record.status === "present"
-                                ? "bg-green-900 text-green-300"
-                                : record.status === "late"
-                                ? "bg-yellow-900 text-yellow-300"
-                                : "bg-red-900 text-red-300"
-                            }`}
-                          >
-                            {record.status.charAt(0).toUpperCase() + record.status.slice(1)}
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4">
-                        {editingId === record.id ? (
+            <div className="divide-y divide-slate-700/50">
+              {filteredRecords.map((record) => (
+                <div
+                  key={record.id}
+                  className="px-6 py-4 hover:bg-slate-700/20 transition-colors"
+                >
+                  {/* Main row */}
+                  <div className="flex items-center gap-4 flex-wrap">
+                    {/* Student info */}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-white font-medium">{record.studentName}</p>
+                      <p className="text-slate-500 text-xs">
+                        {record.studentId} · <span className="font-mono">{record.rfidTag}</span>
+                        {record.time ? ` · Scanned ${record.time}` : " · No scan"}
+                      </p>
+                      {record.correctedBy && (
+                        <p className="text-yellow-500 text-xs mt-0.5">✏️ Corrected by {record.correctedBy}</p>
+                      )}
+                    </div>
+
+                    {/* Status */}
+                    <div className="shrink-0">
+                      {editingId === record.id ? (
+                        <select
+                          value={editStatus}
+                          onChange={(e) =>
+                            setEditStatus(e.target.value as "present" | "absent" | "late")
+                          }
+                          className="bg-slate-900 border border-blue-500 text-white rounded px-2 py-1 text-sm"
+                        >
+                          <option value="present">Present</option>
+                          <option value="late">Late</option>
+                          <option value="absent">Absent</option>
+                        </select>
+                      ) : (
+                        <span
+                          className={`text-xs px-2.5 py-1 rounded-full font-medium ${
+                            record.status === "present"
+                              ? "bg-green-900 text-green-300"
+                              : record.status === "late"
+                              ? "bg-yellow-900 text-yellow-300"
+                              : "bg-red-900 text-red-300"
+                          }`}
+                        >
+                          {record.status.charAt(0).toUpperCase() + record.status.slice(1)}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Actions */}
+                    <div className="shrink-0">
+                      {editingId === record.id ? (
+                        <div className="space-y-2">
+                          <div>
+                            <label className="block text-slate-400 text-xs mb-1">Teacher Note (optional)</label>
+                            <input
+                              type="text"
+                              value={editNote}
+                              onChange={(e) => setEditNote(e.target.value)}
+                              placeholder="Add a note…"
+                              className="bg-slate-900 border border-slate-600 text-white rounded px-2 py-1 text-xs w-48 focus:outline-none focus:border-blue-500"
+                            />
+                          </div>
                           <div className="flex gap-2">
                             <button
                               onClick={() => handleSave(record.id)}
@@ -214,19 +239,89 @@ export default function TeacherPage() {
                               Cancel
                             </button>
                           </div>
-                        ) : (
-                          <button
-                            onClick={() => handleEdit(record)}
-                            className="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded text-xs font-medium transition-colors"
-                          >
-                            ✏️ Edit
-                          </button>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => handleEdit(record)}
+                          className="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded text-xs font-medium transition-colors"
+                        >
+                          ✏️ Edit
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Absence reason from parent + teacher note */}
+                  {record.status === "absent" && (
+                    <div className="mt-3 space-y-2">
+                      {/* Parent reason */}
+                      {record.absentReason ? (
+                        <div className="flex items-start gap-2 p-3 bg-blue-950/40 border border-blue-700/40 rounded-lg">
+                          <span className="text-blue-400 text-sm mt-0.5">💬</span>
+                          <div>
+                            <p className="text-blue-300 text-xs font-medium mb-0.5">Parent reason:</p>
+                            <p className="text-slate-300 text-sm">{record.absentReason}</p>
+                          </div>
+                        </div>
+                      ) : (
+                        <p className="text-slate-600 text-xs italic">No absence reason submitted by parent yet.</p>
+                      )}
+
+                      {/* Teacher note */}
+                      {editingNoteId === record.id ? (
+                        <div className="space-y-2">
+                          <textarea
+                            value={noteDraft}
+                            onChange={(e) => setNoteDraft(e.target.value)}
+                            placeholder="Add a teacher note about this absence…"
+                            rows={2}
+                            className="w-full bg-slate-900 border border-purple-500 text-white rounded-lg px-3 py-2 text-sm focus:outline-none resize-none placeholder-slate-500"
+                          />
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => handleSaveNote(record.id)}
+                              className="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded text-xs font-medium transition-colors"
+                            >
+                              Save Note
+                            </button>
+                            <button
+                              onClick={() => setEditingNoteId(null)}
+                              className="px-3 py-1.5 bg-slate-600 hover:bg-slate-500 text-white rounded text-xs font-medium transition-colors"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex items-start gap-2">
+                          {record.teacherNote ? (
+                            <div className="flex-1 flex items-start gap-2 p-3 bg-purple-950/40 border border-purple-700/40 rounded-lg">
+                              <span className="text-purple-400 text-sm mt-0.5">📌</span>
+                              <div className="flex-1">
+                                <p className="text-purple-300 text-xs font-medium mb-0.5">Teacher note:</p>
+                                <p className="text-slate-300 text-sm">{record.teacherNote}</p>
+                              </div>
+                              <button
+                                onClick={() => handleStartEditNote(record)}
+                                className="text-purple-400 hover:text-purple-300 text-xs shrink-0"
+                              >
+                                Edit
+                              </button>
+                            </div>
+                          ) : (
+                            <button
+                              onClick={() => handleStartEditNote(record)}
+                              className="px-3 py-1.5 bg-purple-900/40 hover:bg-purple-800/50 border border-purple-700/50 text-purple-300 rounded text-xs font-medium transition-colors"
+                            >
+                              📌 Add Note
+                            </button>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
           )}
         </div>

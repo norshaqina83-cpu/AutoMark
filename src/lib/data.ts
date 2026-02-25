@@ -22,6 +22,29 @@ export type AttendanceRecord = {
   status: "present" | "absent" | "late";
   rfidTag: string;
   correctedBy?: string;
+  /** Reason for absence submitted by parent */
+  absentReason?: string;
+  /** Internal note added by teacher/admin */
+  teacherNote?: string;
+};
+
+/**
+ * Configurable attendance time thresholds.
+ * - Scans at or before `lateAfter` → Present
+ * - Scans after `lateAfter` and at or before `absentAfter` → Late
+ * - Scans after `absentAfter` OR no scan → Absent
+ * Times are stored as "HH:MM" (24-hour).
+ */
+export type AttendanceSettings = {
+  /** Scans after this time are marked Late (default: "07:00") */
+  lateAfter: string;
+  /** Scans after this time are marked Absent (default: "12:30") */
+  absentAfter: string;
+};
+
+export const attendanceSettings: AttendanceSettings = {
+  lateAfter: "07:00",
+  absentAfter: "12:30",
 };
 
 export const students: Student[] = [
@@ -94,7 +117,7 @@ export const attendanceRecords: AttendanceRecord[] = [
     studentName: "Alice Johnson",
     class: "10A",
     date: "2026-02-25",
-    time: "08:02",
+    time: "06:55",
     status: "present",
     rfidTag: "RFID-A1B2C3",
   },
@@ -117,6 +140,7 @@ export const attendanceRecords: AttendanceRecord[] = [
     time: "",
     status: "absent",
     rfidTag: "RFID-M4N5O6",
+    absentReason: "Sick with fever — will return tomorrow.",
   },
   {
     id: "a4",
@@ -124,7 +148,7 @@ export const attendanceRecords: AttendanceRecord[] = [
     studentName: "David Brown",
     class: "10B",
     date: "2026-02-25",
-    time: "07:58",
+    time: "06:58",
     status: "present",
     rfidTag: "RFID-J1K2L3",
   },
@@ -134,7 +158,7 @@ export const attendanceRecords: AttendanceRecord[] = [
     studentName: "Alice Johnson",
     class: "10A",
     date: "2026-02-24",
-    time: "08:01",
+    time: "07:01",
     status: "present",
     rfidTag: "RFID-A1B2C3",
   },
@@ -147,6 +171,8 @@ export const attendanceRecords: AttendanceRecord[] = [
     time: "",
     status: "absent",
     rfidTag: "RFID-D4E5F6",
+    absentReason: "Family emergency.",
+    teacherNote: "Parent called in advance.",
   },
   {
     id: "a7",
@@ -154,7 +180,7 @@ export const attendanceRecords: AttendanceRecord[] = [
     studentName: "Emma Davis",
     class: "10A",
     date: "2026-02-24",
-    time: "08:05",
+    time: "07:05",
     status: "present",
     rfidTag: "RFID-M4N5O6",
   },
@@ -164,7 +190,7 @@ export const attendanceRecords: AttendanceRecord[] = [
     studentName: "Frank Wilson",
     class: "10C",
     date: "2026-02-25",
-    time: "08:00",
+    time: "07:00",
     status: "present",
     rfidTag: "RFID-P7Q8R9",
   },

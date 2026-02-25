@@ -1,9 +1,12 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
 import AuthGuard from "@/components/AuthGuard";
-import { students, attendanceRecords } from "@/lib/data";
+import { students, attendanceRecords, attendanceSettings } from "@/lib/data";
 
-export default function Home() {
+function AdminDashboardContent() {
   const today = new Date().toISOString().split("T")[0];
   const todayRecords = attendanceRecords.filter((r) => r.date === today);
   const presentToday = todayRecords.filter((r) => r.status === "present").length;
@@ -21,8 +24,29 @@ export default function Home() {
     })
     .slice(0, 5);
 
+  // Time settings state
+  const [lateAfter, setLateAfter] = useState(attendanceSettings.lateAfter);
+  const [absentAfter, setAbsentAfter] = useState(attendanceSettings.absentAfter);
+  const [settingsSaved, setSettingsSaved] = useState(false);
+  const [settingsError, setSettingsError] = useState("");
+
+  const handleSaveSettings = () => {
+    setSettingsError("");
+    // Validate: lateAfter must be before absentAfter
+    const [lh, lm] = lateAfter.split(":").map(Number);
+    const [ah, am] = absentAfter.split(":").map(Number);
+    if (lh * 60 + lm >= ah * 60 + am) {
+      setSettingsError("'Late after' time must be earlier than 'Absent after' time.");
+      return;
+    }
+    // Apply to the shared settings object (in-memory)
+    attendanceSettings.lateAfter = lateAfter;
+    attendanceSettings.absentAfter = absentAfter;
+    setSettingsSaved(true);
+    setTimeout(() => setSettingsSaved(false), 3000);
+  };
+
   return (
-    <AuthGuard allowedRoles={["admin"]}>
     <div className="min-h-screen bg-slate-950 text-white">
       <Navbar />
 
@@ -52,7 +76,7 @@ export default function Home() {
               <span className="text-2xl">⏰</span>
             </div>
             <p className="text-3xl font-bold text-yellow-400">{lateToday}</p>
-            <p className="text-slate-500 text-xs mt-1">arrived after cutoff</p>
+            <p className="text-slate-500 text-xs mt-1">arrived after {attendanceSettings.lateAfter}</p>
           </div>
 
           <div className="bg-slate-800 rounded-xl p-5 border border-slate-700">
@@ -72,6 +96,99 @@ export default function Home() {
             <p className="text-3xl font-bold text-blue-400">{students.length}</p>
             <p className="text-slate-500 text-xs mt-1">enrolled in system</p>
           </div>
+        </div>
+
+        {/* Attendance Time Settings */}
+        <div className="bg-slate-800 rounded-xl p-6 border border-slate-700 mb-8">
+          <h2 className="text-lg font-semibold text-white mb-1 flex items-center gap-2">
+            <span>⏱️</span> Attendance Time Settings
+          </h2>
+          <p className="text-slate-400 text-sm mb-5">
+            Configure the cutoff times used to classify RFID scans as Present, Late, or Absent.
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
+            {/* Late After */}
+            <div className="bg-slate-900 rounded-xl p-4 border border-slate-700">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-yellow-400 text-lg">⏰</span>
+                <div>
+                  <p className="text-white text-sm font-medium">Late After</p>
+                  <p className="text-slate-500 text-xs">Scans after this time are marked Late</p>
+                </div>
+              </div>
+              <input
+                type="time"
+                value={lateAfter}
+                onChange={(e) => { setLateAfter(e.target.value); setSettingsError(""); }}
+                className="w-full bg-slate-800 border border-slate-600 text-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-yellow-500 transition-colors"
+              />
+              <p className="text-slate-500 text-xs mt-2">
+                Current: <span className="text-yellow-400 font-mono">{attendanceSettings.lateAfter}</span>
+              </p>
+            </div>
+
+            {/* Absent After */}
+            <div className="bg-slate-900 rounded-xl p-4 border border-slate-700">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-red-400 text-lg">🚫</span>
+                <div>
+                  <p className="text-white text-sm font-medium">Absent After</p>
+                  <p className="text-slate-500 text-xs">Scans after this time are marked Absent</p>
+                </div>
+              </div>
+              <input
+                type="time"
+                value={absentAfter}
+                onChange={(e) => { setAbsentAfter(e.target.value); setSettingsError(""); }}
+                className="w-full bg-slate-800 border border-slate-600 text-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-red-500 transition-colors"
+              />
+              <p className="text-slate-500 text-xs mt-2">
+                Current: <span className="text-red-400 font-mono">{attendanceSettings.absentAfter}</span>
+              </p>
+            </div>
+          </div>
+
+          {/* Status legend */}
+          <div className="flex flex-wrap gap-3 mb-5 text-xs">
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-green-900/30 border border-green-700/50 rounded-lg">
+              <span className="w-2 h-2 bg-green-400 rounded-full"></span>
+              <span className="text-green-300">
+                <strong>Present</strong> — scan at or before {lateAfter}
+              </span>
+            </div>
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-yellow-900/30 border border-yellow-700/50 rounded-lg">
+              <span className="w-2 h-2 bg-yellow-400 rounded-full"></span>
+              <span className="text-yellow-300">
+                <strong>Late</strong> — scan after {lateAfter} and before {absentAfter}
+              </span>
+            </div>
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-red-900/30 border border-red-700/50 rounded-lg">
+              <span className="w-2 h-2 bg-red-400 rounded-full"></span>
+              <span className="text-red-300">
+                <strong>Absent</strong> — scan after {absentAfter} or no scan
+              </span>
+            </div>
+          </div>
+
+          {settingsError && (
+            <div className="mb-4 p-3 bg-red-950/60 border border-red-700/60 rounded-lg text-red-300 text-sm flex items-center gap-2">
+              <span>⚠️</span> {settingsError}
+            </div>
+          )}
+
+          {settingsSaved && (
+            <div className="mb-4 p-3 bg-green-900/50 border border-green-700 rounded-lg text-green-300 text-sm flex items-center gap-2">
+              <span>✅</span> Time settings saved successfully.
+            </div>
+          )}
+
+          <button
+            onClick={handleSaveSettings}
+            className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold transition-colors"
+          >
+            Save Time Settings
+          </button>
         </div>
 
         {/* RFID Card Status + Recent Scans */}
@@ -207,6 +324,13 @@ export default function Home() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <AuthGuard allowedRoles={["admin"]}>
+      <AdminDashboardContent />
     </AuthGuard>
   );
 }

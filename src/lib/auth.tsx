@@ -6,39 +6,42 @@ export type UserRole = "admin" | "teacher" | "parent";
 
 export type User = {
   id: string;
+  /** The numeric ID used to log in (e.g. "ADM001", "TCH001", "PAR001") */
+  idNumber: string;
   name: string;
   role: UserRole;
   /** For parents: the studentId they are linked to */
   linkedStudentId?: string;
 };
 
-// Mock user accounts — in production these would come from a real auth system
+// Mock user accounts — in production these would come from a real database
+// Users log in with their idNumber + password
 export const MOCK_USERS: User[] = [
-  { id: "u1", name: "Admin User", role: "admin" },
-  { id: "u2", name: "Ms. Thompson", role: "teacher" },
-  { id: "u3", name: "Mr. Johnson", role: "parent", linkedStudentId: "STU001" },
-  { id: "u4", name: "Mrs. Smith", role: "parent", linkedStudentId: "STU002" },
-  { id: "u5", name: "Mr. White", role: "parent", linkedStudentId: "STU003" },
-  { id: "u6", name: "Mrs. Brown", role: "parent", linkedStudentId: "STU004" },
-  { id: "u7", name: "Mr. Davis", role: "parent", linkedStudentId: "STU005" },
-  { id: "u8", name: "Mrs. Wilson", role: "parent", linkedStudentId: "STU006" },
+  { id: "u1", idNumber: "ADM001", name: "Admin User", role: "admin" },
+  { id: "u2", idNumber: "TCH001", name: "Ms. Thompson", role: "teacher" },
+  { id: "u3", idNumber: "PAR001", name: "Mr. Johnson", role: "parent", linkedStudentId: "STU001" },
+  { id: "u4", idNumber: "PAR002", name: "Mrs. Smith", role: "parent", linkedStudentId: "STU002" },
+  { id: "u5", idNumber: "PAR003", name: "Mr. White", role: "parent", linkedStudentId: "STU003" },
+  { id: "u6", idNumber: "PAR004", name: "Mrs. Brown", role: "parent", linkedStudentId: "STU004" },
+  { id: "u7", idNumber: "PAR005", name: "Mr. Davis", role: "parent", linkedStudentId: "STU005" },
+  { id: "u8", idNumber: "PAR006", name: "Mrs. Wilson", role: "parent", linkedStudentId: "STU006" },
 ];
 
 // Mock passwords — in production use hashed passwords + real auth
 export const MOCK_PASSWORDS: Record<string, string> = {
-  u1: "admin123",
-  u2: "teacher123",
-  u3: "parent123",
-  u4: "parent123",
-  u5: "parent123",
-  u6: "parent123",
-  u7: "parent123",
-  u8: "parent123",
+  ADM001: "admin123",
+  TCH001: "teacher123",
+  PAR001: "parent123",
+  PAR002: "parent123",
+  PAR003: "parent123",
+  PAR004: "parent123",
+  PAR005: "parent123",
+  PAR006: "parent123",
 };
 
 type AuthContextType = {
   user: User | null;
-  login: (userId: string, password: string) => { success: boolean; error?: string };
+  login: (idNumber: string, password: string) => { success: boolean; error?: string };
   logout: () => void;
   isLoading: boolean;
 };
@@ -68,10 +71,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = useCallback(
-    (userId: string, password: string): { success: boolean; error?: string } => {
-      const found = MOCK_USERS.find((u) => u.id === userId);
-      if (!found) return { success: false, error: "User not found." };
-      if (MOCK_PASSWORDS[userId] !== password)
+    (idNumber: string, password: string): { success: boolean; error?: string } => {
+      const normalised = idNumber.trim().toUpperCase();
+      const found = MOCK_USERS.find((u) => u.idNumber === normalised);
+      if (!found) return { success: false, error: "ID number not found. Please check and try again." };
+      if (MOCK_PASSWORDS[normalised] !== password)
         return { success: false, error: "Incorrect password." };
       setUser(found);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(found));
