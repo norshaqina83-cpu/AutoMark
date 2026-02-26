@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "RFID Attendance System",
+  title: "AutoMark - RFID Attendance System",
   description: "Digital attendance management system using RFID technology",
 };
 

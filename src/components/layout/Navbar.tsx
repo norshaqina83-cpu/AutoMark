@@ -50,7 +50,7 @@ export default function Navbar() {
           <Link href={user ? (user.role === "parent" ? "/parent" : user.role === "teacher" ? "/teacher" : "/") : "/login"} className="flex items-center gap-2">
             <img src="/logo.svg" alt="RFID Attendance Logo" className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-sm" />
             <span className="text-white font-semibold text-lg hidden sm:block">
-              RFID Attendance
+              AutoMark
             </span>
           </Link>
 
