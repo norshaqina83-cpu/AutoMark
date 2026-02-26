@@ -60,10 +60,8 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-2xl mb-4 text-3xl">
-            📡
-          </div>
-          <h1 className="text-2xl font-bold text-white">RFID Attendance System</h1>
+          <img src="/workspaces/AutoMark/WhatsApp_Image_2026-02-25_at_15.28.12-removebg-preview.png" alt="Logo" className="w-16 h-16 rounded-2xl mb-4 object-cover" />
+          <h1 className="text-2xl font-bold text-white">AutoMark</h1>
           <p className="text-slate-400 text-sm mt-1">Sign in with your ID number to access your portal</p>
         </div>
 
