@@ -38,6 +38,13 @@ A complete digital attendance management system using RFID technology (RC522 rea
   - [x] Parent portal: submit absence reason per absent record (editable)
   - [x] Teacher portal: view parent-submitted absence reasons + add/edit teacher notes
   - [x] `absentReason` and `teacherNote` fields added to `AttendanceRecord` type
+- [x] **Student Dashboard**:
+  - [x] Add `student` role to UserRole type in auth system
+  - [x] Add student users (STU001-STU006) with passwords
+  - [x] Create student dashboard at `/student` with attendance rate display
+  - [x] Filter by period (7 days, 30 days, all time)
+  - [x] Show recent attendance records with status
+  - [x] Update navbar with student-specific navigation and badge
 
 ## Current Structure
 
@@ -51,6 +58,7 @@ A complete digital attendance management system using RFID technology (RC522 rea
 | `src/app/cards/page.tsx` | RFID card manager | ✅ Ready |
 | `src/app/parent/page.tsx` | Parent portal + absence reasons | ✅ Ready |
 | `src/app/students/page.tsx` | Student registry | ✅ Ready |
+| `src/app/student/page.tsx` | Student dashboard + attendance rate | ✅ Ready |
 | `src/app/api/attendance/route.ts` | Attendance API (GET/POST/PATCH/PUT) | ✅ Ready |
 | `src/app/api/cards/route.ts` | RFID card API | ✅ Ready |
 | `src/components/layout/Navbar.tsx` | Navigation bar | ✅ Ready |
@@ -85,6 +93,7 @@ Users log in with their **ID number** (e.g. `ADM001`, `TCH001`, `PAR001`) + pass
 | Admin | ADM001 | Full read + write + settings | `/`, `/teacher`, `/cards`, `/students`, `/parent` |
 | Teacher | TCH001 | Read + write attendance | `/teacher`, `/cards`, `/students` |
 | Parent | PAR001–PAR006 | View + submit absence reasons | `/parent` (own child only) |
+| Student | STU001–STU006 | View own attendance rate | `/student` |
 
 ### Absence Reason Workflow
 1. Student is absent → no RFID scan recorded
@@ -100,3 +109,5 @@ Users log in with their **ID number** (e.g. `ADM001`, `TCH001`, `PAR001`) + pass
 | 2026-02-25 | Full RFID attendance system built — 5 pages, 2 API routes, shared data layer |
 | 2026-02-25 | Role-based auth added — login page, AuthProvider, AuthGuard, role-specific nav |
 | 2026-02-25 | ID-based login, configurable time thresholds, absence reasons, teacher notes |
+| 2026-03-03 | Added student role and dashboard with attendance rate |
+| 2026-03-03 | Added student role and dashboard with attendance rate |
