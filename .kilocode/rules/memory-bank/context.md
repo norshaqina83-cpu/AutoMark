@@ -52,6 +52,9 @@ A complete digital attendance management system using RFID technology (RC522 rea
   - [x] Show current streak, longest streak, and progress bar
   - [x] Add encouraging messages based on streak milestones
   - [x] Students must contact teacher to receive reward after claiming
+  - [x] Teacher can mark rewards as received with optional notes
+  - [x] Reward history tracking with received status
+  - [x] Students can claim new reward after 100 more days from last claim
 
 ## Current Structure
 
@@ -118,3 +121,5 @@ Users log in with their **ID number** (e.g. `ADM001`, `TCH001`, `PAR001`) + pass
 | 2026-02-25 | ID-based login, configurable time thresholds, absence reasons, teacher notes |
 | 2026-03-03 | Added student role and dashboard with attendance rate |
 | 2026-03-03 | Added streak system with reward claims - streak resets when absent, claim reward at 100 days |
+| 2026-03-03 | Added teacher reward management panel - view pending, mark as received, track history |
+| 2026-03-03 | Students can claim new reward after 100+ days from last claim streak |
