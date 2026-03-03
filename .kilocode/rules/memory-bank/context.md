@@ -45,6 +45,13 @@ A complete digital attendance management system using RFID technology (RC522 rea
   - [x] Filter by period (7 days, 30 days, all time)
   - [x] Show recent attendance records with status
   - [x] Update navbar with student-specific navigation and badge
+- [x] **Streak System & Rewards**:
+  - [x] Replace attendance rate with streak tracking (consecutive present/late days)
+  - [x] Streak resets to 0 when student is absent for a day
+  - [x] Add reward claim functionality when streak reaches 100 days
+  - [x] Show current streak, longest streak, and progress bar
+  - [x] Add encouraging messages based on streak milestones
+  - [x] Students must contact teacher to receive reward after claiming
 
 ## Current Structure
 
@@ -58,7 +65,7 @@ A complete digital attendance management system using RFID technology (RC522 rea
 | `src/app/cards/page.tsx` | RFID card manager | ✅ Ready |
 | `src/app/parent/page.tsx` | Parent portal + absence reasons | ✅ Ready |
 | `src/app/students/page.tsx` | Student registry | ✅ Ready |
-| `src/app/student/page.tsx` | Student dashboard + attendance rate | ✅ Ready |
+| `src/app/student/page.tsx` | Student dashboard + streak tracking + reward claims | ✅ Ready |
 | `src/app/api/attendance/route.ts` | Attendance API (GET/POST/PATCH/PUT) | ✅ Ready |
 | `src/app/api/cards/route.ts` | RFID card API | ✅ Ready |
 | `src/components/layout/Navbar.tsx` | Navigation bar | ✅ Ready |
@@ -93,7 +100,7 @@ Users log in with their **ID number** (e.g. `ADM001`, `TCH001`, `PAR001`) + pass
 | Admin | ADM001 | Full read + write + settings | `/`, `/teacher`, `/cards`, `/students`, `/parent` |
 | Teacher | TCH001 | Read + write attendance | `/teacher`, `/cards`, `/students` |
 | Parent | PAR001–PAR006 | View + submit absence reasons | `/parent` (own child only) |
-| Student | STU001–STU006 | View own attendance rate | `/student` |
+| Student | STU001–STU006 | View own attendance streak & claim rewards | `/student` |
 
 ### Absence Reason Workflow
 1. Student is absent → no RFID scan recorded
@@ -110,4 +117,4 @@ Users log in with their **ID number** (e.g. `ADM001`, `TCH001`, `PAR001`) + pass
 | 2026-02-25 | Role-based auth added — login page, AuthProvider, AuthGuard, role-specific nav |
 | 2026-02-25 | ID-based login, configurable time thresholds, absence reasons, teacher notes |
 | 2026-03-03 | Added student role and dashboard with attendance rate |
-| 2026-03-03 | Added student role and dashboard with attendance rate |
+| 2026-03-03 | Added streak system with reward claims - streak resets when absent, claim reward at 100 days |
