@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 
-export type UserRole = "admin" | "teacher" | "parent";
+export type UserRole = "admin" | "teacher" | "parent" | "student";
 
 export type User = {
   id: string;
@@ -25,6 +25,13 @@ export const MOCK_USERS: User[] = [
   { id: "u6", idNumber: "PAR004", name: "Mrs. Brown", role: "parent", linkedStudentId: "STU004" },
   { id: "u7", idNumber: "PAR005", name: "Mr. Davis", role: "parent", linkedStudentId: "STU005" },
   { id: "u8", idNumber: "PAR006", name: "Mrs. Wilson", role: "parent", linkedStudentId: "STU006" },
+  // Student users (students log in with their own student IDs)
+  { id: "s1", idNumber: "STU001", name: "Alice Johnson", role: "student" },
+  { id: "s2", idNumber: "STU002", name: "Bob Smith", role: "student" },
+  { id: "s3", idNumber: "STU003", name: "Carol White", role: "student" },
+  { id: "s4", idNumber: "STU004", name: "David Brown", role: "student" },
+  { id: "s5", idNumber: "STU005", name: "Emma Davis", role: "student" },
+  { id: "s6", idNumber: "STU006", name: "Frank Wilson", role: "student" },
 ];
 
 // Mock passwords — in production use hashed passwords + real auth
@@ -37,6 +44,13 @@ export const MOCK_PASSWORDS: Record<string, string> = {
   PAR004: "parent123",
   PAR005: "parent123",
   PAR006: "parent123",
+  // Student passwords
+  STU001: "student123",
+  STU002: "student123",
+  STU003: "student123",
+  STU004: "student123",
+  STU005: "student123",
+  STU006: "student123",
 };
 
 type AuthContextType = {

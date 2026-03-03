@@ -8,6 +8,7 @@ const ROLE_REDIRECTS: Record<UserRole, string> = {
   admin: "/",
   teacher: "/teacher",
   parent: "/parent",
+  student: "/student",
 };
 
 export default function LoginPage() {
@@ -157,6 +158,16 @@ export default function LoginPage() {
                   </div>
                 </div>
                 <p className="text-slate-500 font-mono">parent123</p>
+              </div>
+              <div className="bg-slate-900 rounded-lg p-3 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span>🎓</span>
+                  <div>
+                    <p className="text-slate-300 font-medium">Student</p>
+                    <p className="text-slate-500">ID: STU001 – STU006</p>
+                  </div>
+                </div>
+                <p className="text-slate-500 font-mono">student123</p>
               </div>
             </div>
           </div>
