@@ -60,8 +60,8 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <img src="/workspaces/AutoMark/public/logo.png" alt="Logo" className="w-16 h-16 rounded-2xl mb-4 object-cover" />
-          <h1 className="text-2xl font-bold text-white">AutoMark</h1>
+          <img src="/logo.png" alt="Logo" className="w-16 h-16 rounded-2xl mb-4 object-cover" />
+                    <h1 className="text-2xl font-bold text-white">AutoMark</h1>
           <p className="text-slate-400 text-sm mt-1">Sign in with your ID number to access your portal</p>
         </div>
 
