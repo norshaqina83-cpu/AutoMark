@@ -52,7 +52,7 @@ export default function Navbar() {
         <div className="flex items-center justify-center">
           {/* Logo */}
           <Link href={user ? (user.role === "parent" ? "/parent" : user.role === "teacher" ? "/teacher" : user.role === "student" ? "/student" : "/") : "/login"} className="flex items-center gap-2">
-            <img src="/logo.png" alt="RFID Attendance Logo" className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-sm" />
+            <img src="/logo.png" alt="Logo" className="w-16 h-16 rounded-2xl mb-4 object-cover mx-auto"/>
             <span className="text-white font-semibold text-lg hidden sm:block">
               AutoMark
             </span>
