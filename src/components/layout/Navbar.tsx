@@ -45,7 +45,7 @@ export default function Navbar() {
   return (
     <nav className="bg-slate-900 border-b border-slate-700 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-center h-screen">
+        <div className="flex items-center justify-center">
           {/* Logo */}
           <Link href={user ? (user.role === "parent" ? "/parent" : user.role === "teacher" ? "/teacher" : "/") : "/login"} className="flex items-center gap-2">
             <img src="/logo.png" alt="RFID Attendance Logo" className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-sm" />
