@@ -53,7 +53,6 @@ export default function Navbar() {
           {/* Logo */}
           <Link href={user ? (user.role === "parent" ? "/parent" : user.role === "teacher" ? "/teacher" : user.role === "student" ? "/student" : "/") : "/login"} className="flex items-center gap-2">
             <img src="/logo.svg" alt="RFID Attendance Logo" className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-sm" />
->>>>>>> 6d4f9e2 (Add student role and dashboard with attendance rate)
             <span className="text-white font-semibold text-lg hidden sm:block">
               AutoMark
             </span>

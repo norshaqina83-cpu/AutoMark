@@ -8,6 +8,7 @@ import AuthGuard from "@/components/AuthGuard";
 export default function StudentDashboard() {
   const { user } = useAuth();
   const [selectedPeriod, setSelectedPeriod] = useState<"week" | "month" | "all">("month");
+  const [claimedReward, setClaimedReward] = useState(false);
 
   // Get student's attendance records
   const studentRecords = useMemo(() => {
@@ -18,7 +19,6 @@ export default function StudentDashboard() {
   // Get student info
   const studentInfo = useMemo((): Student | null => {
     if (!user) return null;
-    // Find student in the students array using idNumber as studentId
     const students = [
       { id: "s1", name: "Alice Johnson", studentId: "STU001", class: "10A", rfidTag: "RFID-A1B2C3", rfidStatus: "active" as const, parentEmail: "", parentName: "" },
       { id: "s2", name: "Bob Smith", studentId: "STU002", class: "10A", rfidTag: "RFID-D4E5F6", rfidStatus: "active" as const, parentEmail: "", parentName: "" },
@@ -29,6 +29,64 @@ export default function StudentDashboard() {
     ];
     return students.find((s) => s.studentId === user.idNumber) || null;
   }, [user]);
+
+  // Calculate streak - counts consecutive days of present/late (not absent)
+  // Streak is lost when student is absent for a day
+  const streakData = useMemo(() => {
+    if (!user || studentRecords.length === 0) return { currentStreak: 0, longestStreak: 0, totalPresent: 0, totalLate: 0, totalAbsent: 0 };
+
+    // Sort records by date (newest first for current streak calculation)
+    const sortedByDate = [...studentRecords].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    
+    // Get unique dates only
+    const uniqueDates = sortedByDate.reduce((acc, record) => {
+      if (!acc.find(r => r.date === record.date)) {
+        acc.push(record);
+      }
+      return acc;
+    }, [] as typeof sortedByDate);
+
+    // Calculate current streak (consecutive present/late from today backwards)
+    let currentStreak = 0;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    for (const record of uniqueDates) {
+      const recordDate = new Date(record.date);
+      recordDate.setHours(0, 0, 0, 0);
+      
+      // Skip future dates
+      if (recordDate > today) continue;
+      
+      if (record.status === "present" || record.status === "late") {
+        currentStreak++;
+      } else {
+        // Streak broken by absence
+        break;
+      }
+    }
+
+    // Calculate longest streak
+    let longestStreak = 0;
+    let tempStreak = 0;
+    const sortedAsc = [...uniqueDates].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    
+    for (const record of sortedAsc) {
+      if (record.status === "present" || record.status === "late") {
+        tempStreak++;
+        longestStreak = Math.max(longestStreak, tempStreak);
+      } else {
+        tempStreak = 0;
+      }
+    }
+
+    // Count totals
+    const totalPresent = studentRecords.filter(r => r.status === "present").length;
+    const totalLate = studentRecords.filter(r => r.status === "late").length;
+    const totalAbsent = studentRecords.filter(r => r.status === "absent").length;
+
+    return { currentStreak, longestStreak, totalPresent, totalLate, totalAbsent };
+  }, [studentRecords, user]);
 
   // Filter records based on selected period
   const filteredRecords = useMemo(() => {
@@ -53,15 +111,14 @@ export default function StudentDashboard() {
     });
   }, [studentRecords, selectedPeriod, user]);
 
-  // Calculate attendance stats
+  // Calculate stats for filtered period
   const stats = useMemo(() => {
     const total = filteredRecords.length;
     const present = filteredRecords.filter((r) => r.status === "present").length;
     const late = filteredRecords.filter((r) => r.status === "late").length;
     const absent = filteredRecords.filter((r) => r.status === "absent").length;
-    const attendanceRate = total > 0 ? Math.round(((present + late) / total) * 100) : 0;
 
-    return { total, present, late, absent, attendanceRate };
+    return { total, present, late, absent };
   }, [filteredRecords]);
 
   // Get recent records (last 10)
@@ -97,6 +154,15 @@ export default function StudentDashboard() {
     }
   };
 
+  const handleClaimReward = () => {
+    if (streakData.currentStreak >= 100) {
+      setClaimedReward(true);
+      alert("Reward claimed! Please contact your teacher to receive your reward.");
+    }
+  };
+
+  const canClaimReward = streakData.currentStreak >= 100 && !claimedReward;
+
   return (
     <AuthGuard allowedRoles={["student"]}>
       <div className="min-h-screen bg-slate-950">
@@ -104,7 +170,7 @@ export default function StudentDashboard() {
           {/* Header */}
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-white">Welcome, {user?.name}!</h1>
-            <p className="text-slate-400 mt-1">View your attendance records and track your attendance rate</p>
+            <p className="text-slate-400 mt-1">Track your attendance streak and earn rewards!</p>
           </div>
 
           {/* Student Info Card */}
@@ -122,25 +188,53 @@ export default function StudentDashboard() {
             </div>
           )}
 
+          {/* Streak Display */}
+          <div className="mb-8">
+            <div className="bg-gradient-to-r from-amber-600 to-orange-600 border border-amber-500 rounded-2xl p-8 text-center">
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <span className="text-5xl">🔥</span>
+                <span className="text-6xl font-bold text-white">{streakData.currentStreak}</span>
+                <span className="text-2xl text-amber-200">days</span>
+              </div>
+              <p className="text-amber-100 text-lg">
+                {streakData.currentStreak === 0 
+                  ? "Start your streak today! Come to school on time." 
+                  : streakData.currentStreak < 10 
+                    ? "Great start! Keep it up!"
+                    : streakData.currentStreak < 30 
+                      ? "Amazing progress! You're on fire! 🔥"
+                      : streakData.currentStreak < 50
+                        ? "Incredible dedication! 🎉"
+                        : streakData.currentStreak < 100
+                          ? "Outstanding streak! You're a superstar! ⭐"
+                          : "LEGENDARY STREAK! 🏆"}
+              </p>
+              {canClaimReward && (
+                <button
+                  onClick={handleClaimReward}
+                  className="mt-6 px-8 py-3 bg-white text-amber-700 font-bold rounded-full hover:bg-amber-50 transition-colors shadow-lg"
+                >
+                  🎁 Claim Your Reward!
+                </button>
+              )}
+              {claimedReward && (
+                <div className="mt-6 px-6 py-3 bg-green-500 text-white font-semibold rounded-full inline-block">
+                  ✓ Reward Claimed! Contact your teacher.
+                </div>
+              )}
+            </div>
+          </div>
+
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            {/* Attendance Rate */}
+            {/* Longest Streak */}
             <div className="bg-slate-800 border border-slate-700 rounded-2xl p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-slate-400 text-sm font-medium">Attendance Rate</h3>
-                <span className="text-2xl">📊</span>
+                <h3 className="text-slate-400 text-sm font-medium">Longest Streak</h3>
+                <span className="text-2xl">🏅</span>
               </div>
-              <div className="flex items-end gap-2">
-                <span className={`text-4xl font-bold ${stats.attendanceRate >= 90 ? "text-green-400" : stats.attendanceRate >= 75 ? "text-yellow-400" : "text-red-400"}`}>
-                  {stats.attendanceRate}%
-                </span>
-              </div>
-              <div className="mt-3 h-2 bg-slate-700 rounded-full overflow-hidden">
-                <div
-                  className={`h-full rounded-full transition-all ${stats.attendanceRate >= 90 ? "bg-green-500" : stats.attendanceRate >= 75 ? "bg-yellow-500" : "bg-red-500"}`}
-                  style={{ width: `${stats.attendanceRate}%` }}
-                />
-              </div>
+              <p className="text-4xl font-bold text-amber-400">{streakData.longestStreak}</p>
+              <p className="text-slate-500 text-sm mt-1">days</p>
             </div>
 
             {/* Present */}
@@ -172,6 +266,25 @@ export default function StudentDashboard() {
               <p className="text-4xl font-bold text-red-400">{stats.absent}</p>
               <p className="text-slate-500 text-sm mt-1">days</p>
             </div>
+          </div>
+
+          {/* Progress to reward */}
+          <div className="bg-slate-800 border border-slate-700 rounded-2xl p-6 mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-white font-semibold">Progress to Next Reward</h3>
+              <span className="text-amber-400 font-bold">{Math.min(streakData.currentStreak, 100)} / 100 days</span>
+            </div>
+            <div className="h-4 bg-slate-700 rounded-full overflow-hidden">
+              <div
+                className="h-full rounded-full transition-all bg-gradient-to-r from-amber-500 to-yellow-400"
+                style={{ width: `${Math.min(streakData.currentStreak, 100)}%` }}
+              />
+            </div>
+            {streakData.currentStreak < 100 && (
+              <p className="text-slate-400 text-sm mt-3">
+                {100 - streakData.currentStreak} more days to reach your reward!
+              </p>
+            )}
           </div>
 
           {/* Period Filter */}

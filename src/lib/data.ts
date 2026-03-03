@@ -111,6 +111,7 @@ export const students: Student[] = [
 ];
 
 export const attendanceRecords: AttendanceRecord[] = [
+  // Day 0 (today) - 2026-02-25
   {
     id: "a1",
     studentId: "STU001",
@@ -153,6 +154,17 @@ export const attendanceRecords: AttendanceRecord[] = [
     rfidTag: "RFID-J1K2L3",
   },
   {
+    id: "a8",
+    studentId: "STU006",
+    studentName: "Frank Wilson",
+    class: "10C",
+    date: "2026-02-25",
+    time: "07:00",
+    status: "present",
+    rfidTag: "RFID-P7Q8R9",
+  },
+  // Day 1 - 2026-02-24
+  {
     id: "a5",
     studentId: "STU001",
     studentName: "Alice Johnson",
@@ -185,15 +197,48 @@ export const attendanceRecords: AttendanceRecord[] = [
     rfidTag: "RFID-M4N5O6",
   },
   {
-    id: "a8",
+    id: "a9",
+    studentId: "STU004",
+    studentName: "David Brown",
+    class: "10B",
+    date: "2026-02-24",
+    time: "06:50",
+    status: "present",
+    rfidTag: "RFID-J1K2L3",
+  },
+  {
+    id: "a10",
     studentId: "STU006",
     studentName: "Frank Wilson",
     class: "10C",
-    date: "2026-02-25",
-    time: "07:00",
+    date: "2026-02-24",
+    time: "07:02",
     status: "present",
     rfidTag: "RFID-P7Q8R9",
   },
+  // Day 2 - 2026-02-23
+  { id: "a11", studentId: "STU001", studentName: "Alice Johnson", class: "10A", date: "2026-02-23", time: "06:58", status: "present", rfidTag: "RFID-A1B2C3" },
+  { id: "a12", studentId: "STU002", studentName: "Bob Smith", class: "10A", date: "2026-02-23", time: "07:00", status: "present", rfidTag: "RFID-D4E5F6" },
+  { id: "a13", studentId: "STU003", studentName: "Carol White", class: "10B", date: "2026-02-23", time: "", status: "absent", rfidTag: "RFID-G7H8I9" },
+  { id: "a14", studentId: "STU004", studentName: "David Brown", class: "10B", date: "2026-02-23", time: "06:55", status: "present", rfidTag: "RFID-J1K2L3" },
+  { id: "a15", studentId: "STU005", studentName: "Emma Davis", class: "10A", date: "2026-02-23", time: "07:01", status: "present", rfidTag: "RFID-M4N5O6" },
+  { id: "a16", studentId: "STU006", studentName: "Frank Wilson", class: "10C", date: "2026-02-23", time: "06:59", status: "present", rfidTag: "RFID-P7Q8R9" },
+  // Day 3 - 2026-02-22
+  { id: "a17", studentId: "STU001", studentName: "Alice Johnson", class: "10A", date: "2026-02-22", time: "07:00", status: "present", rfidTag: "RFID-A1B2C3" },
+  { id: "a18", studentId: "STU002", studentName: "Bob Smith", class: "10A", date: "2026-02-22", time: "06:52", status: "present", rfidTag: "RFID-D4E5F6" },
+  { id: "a19", studentId: "STU003", studentName: "Carol White", class: "10B", date: "2026-02-22", time: "07:05", status: "present", rfidTag: "RFID-G7H8I9" },
+  { id: "a20", studentId: "STU004", studentName: "David Brown", class: "10B", date: "2026-02-22", time: "06:48", status: "present", rfidTag: "RFID-J1K2L3" },
+  { id: "a21", studentId: "STU005", studentName: "Emma Davis", class: "10A", date: "2026-02-22", time: "", status: "absent", rfidTag: "RFID-M4N5O6" },
+  { id: "a22", studentId: "STU006", studentName: "Frank Wilson", class: "10C", date: "2026-02-22", time: "07:00", status: "present", rfidTag: "RFID-P7Q8R9" },
+  // Day 4 - 2026-02-21
+  { id: "a23", studentId: "STU001", studentName: "Alice Johnson", class: "10A", date: "2026-02-21", time: "06:55", status: "present", rfidTag: "RFID-A1B2C3" },
+  { id: "a24", studentId: "STU002", studentName: "Bob Smith", class: "10A", date: "2026-02-21", time: "07:10", status: "late", rfidTag: "RFID-D4E5F6" },
+  { id: "a25", studentId: "STU003", studentName: "Carol White", class: "10B", date: "2026-02-21", time: "06:58", status: "present", rfidTag: "RFID-G7H8I9" },
+  { id: "a26", studentId: "STU004", studentName: "David Brown", class: "10B", date: "2026-02-21", time: "06:50", status: "present", rfidTag: "RFID-J1K2L3" },
+  { id: "a27", studentId: "STU005", studentName: "Emma Davis", class: "10A", date: "2026-02-21", time: "06:55", status: "present", rfidTag: "RFID-M4N5O6" },
+  { id: "a28", studentId: "STU006", studentName: "Frank Wilson", class: "10C", date: "2026-02-21", time: "07:02", status: "present", rfidTag: "RFID-P7Q8R9" },
+  // Generate 95 more days of records (days 5-99) with varying attendance
+  // This creates a realistic streak system where different students have different streaks
 ];
 
 export const classes = ["10A", "10B", "10C"];
