@@ -2,13 +2,14 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { useAuth } from "@/lib/auth";
-import { attendanceRecords, Student } from "@/lib/data";
+import { attendanceRecords, Student, RewardClaim, rewardClaims } from "@/lib/data";
 import AuthGuard from "@/components/AuthGuard";
 
 export default function StudentDashboard() {
   const { user } = useAuth();
   const [selectedPeriod, setSelectedPeriod] = useState<"week" | "month" | "all">("month");
   const [claimedReward, setClaimedReward] = useState(false);
+  const [rewardsList, setRewardsList] = useState<RewardClaim[]>([...rewardClaims]);
 
   // Get student's attendance records
   const studentRecords = useMemo(() => {
@@ -155,13 +156,61 @@ export default function StudentDashboard() {
   };
 
   const handleClaimReward = () => {
-    if (streakData.currentStreak >= 100) {
+    if (canClaimReward) {
+      const newClaim: RewardClaim = {
+        id: `r${Date.now()}`,
+        studentId: user!.idNumber,
+        streakAtClaim: streakData.currentStreak,
+        claimedAt: new Date().toISOString().split("T")[0],
+        rewardReceived: false,
+      };
+      setRewardsList((prev) => [...prev, newClaim]);
       setClaimedReward(true);
       alert("Reward claimed! Please contact your teacher to receive your reward.");
     }
   };
 
-  const canClaimReward = streakData.currentStreak >= 100 && !claimedReward;
+  // Get student's reward claims
+  const studentRewards = useMemo(() => {
+    if (!user) return [];
+    return rewardsList
+      .filter((r) => r.studentId === user.idNumber)
+      .sort((a, b) => new Date(b.claimedAt).getTime() - new Date(a.claimedAt).getTime());
+  }, [user, rewardsList]);
+
+  // Get the latest claim
+  const latestClaim = studentRewards[0];
+  
+  // Calculate if student can claim a new reward
+  // Must have 100 more days than their last claim streak
+  const canClaimNewReward = useMemo(() => {
+    if (!latestClaim) {
+      // No previous claims, can claim at 100
+      return streakData.currentStreak >= 100;
+    }
+    // Must exceed previous streak by 100 days
+    const daysSinceLastClaim = streakData.currentStreak - latestClaim.streakAtClaim;
+    return daysSinceLastClaim >= 100;
+  }, [streakData.currentStreak, latestClaim]);
+
+  // Calculate days until next reward
+  const daysUntilReward = useMemo(() => {
+    if (!latestClaim) {
+      return Math.max(0, 100 - streakData.currentStreak);
+    }
+    return Math.max(0, 100 - (streakData.currentStreak - latestClaim.streakAtClaim));
+  }, [streakData.currentStreak, latestClaim]);
+
+  // Update claimedReward based on latest claim status
+  // This is derived from rewardsList, so we compute it in the render
+  const claimedRewardStatus = useMemo(() => {
+    if (!latestClaim) return false;
+    return !latestClaim.rewardReceived;
+  }, [latestClaim]);
+
+  const canClaimReward = !latestClaim 
+    ? streakData.currentStreak >= 100 
+    : canClaimNewReward;
 
   return (
     <AuthGuard allowedRoles={["student"]}>
@@ -217,9 +266,14 @@ export default function StudentDashboard() {
                   🎁 Claim Your Reward!
                 </button>
               )}
-              {claimedReward && (
+              {claimedRewardStatus && latestClaim && !latestClaim.rewardReceived && (
+                <div className="mt-6 px-6 py-3 bg-blue-500 text-white font-semibold rounded-full inline-block">
+                  ⏳ Reward Claimed! Awaiting teacher confirmation.
+                </div>
+              )}
+              {latestClaim && latestClaim.rewardReceived && (
                 <div className="mt-6 px-6 py-3 bg-green-500 text-white font-semibold rounded-full inline-block">
-                  ✓ Reward Claimed! Contact your teacher.
+                  ✓ Reward Received! Keep up the great work!
                 </div>
               )}
             </div>
@@ -271,19 +325,61 @@ export default function StudentDashboard() {
           {/* Progress to reward */}
           <div className="bg-slate-800 border border-slate-700 rounded-2xl p-6 mb-8">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-white font-semibold">Progress to Next Reward</h3>
-              <span className="text-amber-400 font-bold">{Math.min(streakData.currentStreak, 100)} / 100 days</span>
+              <h3 className="text-white font-semibold">
+                {latestClaim && latestClaim.rewardReceived 
+                  ? "Progress to Next Reward" 
+                  : latestClaim && !latestClaim.rewardReceived
+                    ? "Reward Claimed - Awaiting Pickup"
+                    : "Progress to Next Reward"
+                }
+              </h3>
+              <span className="text-amber-400 font-bold">
+                {daysUntilReward > 0 
+                  ? `${Math.min(streakData.currentStreak - (latestClaim?.streakAtClaim || 0), 100)} / 100 days` 
+                  : "Ready!"
+                }
+              </span>
             </div>
-            <div className="h-4 bg-slate-700 rounded-full overflow-hidden">
-              <div
-                className="h-full rounded-full transition-all bg-gradient-to-r from-amber-500 to-yellow-400"
-                style={{ width: `${Math.min(streakData.currentStreak, 100)}%` }}
-              />
-            </div>
-            {streakData.currentStreak < 100 && (
-              <p className="text-slate-400 text-sm mt-3">
-                {100 - streakData.currentStreak} more days to reach your reward!
-              </p>
+            {latestClaim && latestClaim.rewardReceived ? (
+              <>
+                <div className="h-4 bg-green-900 rounded-full overflow-hidden mb-3">
+                  <div
+                    className="h-full rounded-full transition-all bg-gradient-to-r from-green-500 to-emerald-400"
+                    style={{ width: '100%' }}
+                  />
+                </div>
+                <p className="text-green-400 text-sm">
+                  🎉 You received your reward on {latestClaim.receivedAt}! 
+                  Build a new streak to claim your next reward.
+                </p>
+              </>
+            ) : latestClaim && !latestClaim.rewardReceived ? (
+              <>
+                <div className="h-4 bg-amber-900 rounded-full overflow-hidden mb-3">
+                  <div
+                    className="h-full rounded-full transition-all bg-gradient-to-r from-amber-500 to-yellow-400 animate-pulse"
+                    style={{ width: '100%' }}
+                  />
+                </div>
+                <p className="text-amber-400 text-sm">
+                  📋 Your reward was claimed on {latestClaim.claimedAt} with a {latestClaim.streakAtClaim}-day streak.
+                  Please contact your teacher to receive it!
+                </p>
+              </>
+            ) : (
+              <>
+                <div className="h-4 bg-slate-700 rounded-full overflow-hidden">
+                  <div
+                    className="h-full rounded-full transition-all bg-gradient-to-r from-amber-500 to-yellow-400"
+                    style={{ width: `${Math.min(streakData.currentStreak, 100)}%` }}
+                  />
+                </div>
+                {streakData.currentStreak < 100 && (
+                  <p className="text-slate-400 text-sm mt-3">
+                    {100 - streakData.currentStreak} more days to reach your reward!
+                  </p>
+                )}
+              </>
             )}
           </div>
 

@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 import Navbar from "@/components/layout/Navbar";
 import AuthGuard from "@/components/AuthGuard";
-import { attendanceRecords, students, classes, AttendanceRecord } from "@/lib/data";
+import { attendanceRecords, students, classes, AttendanceRecord, RewardClaim, rewardClaims } from "@/lib/data";
 
 export default function TeacherPage() {
   const [selectedClass, setSelectedClass] = useState("10A");
@@ -18,6 +18,11 @@ export default function TeacherPage() {
   // Note editing state (separate from status editing)
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
   const [noteDraft, setNoteDraft] = useState("");
+
+  // Reward management state
+  const [teacherNotes, setTeacherNotes] = useState<Record<string, string>>({});
+  const [rewardsList, setRewardsList] = useState<RewardClaim[]>([...rewardClaims]);
+  const [showRewardPanel, setShowRewardPanel] = useState(false);
 
   const filteredRecords = records.filter(
     (r) => r.class === selectedClass && r.date === selectedDate
@@ -75,6 +80,83 @@ export default function TeacherPage() {
       rfidTag: students.find((s) => s.studentId === studentId)?.rfidTag || "",
     };
     setRecords((prev) => [...prev, newRecord]);
+  };
+
+  // Calculate streaks for all students to find eligible reward claimants
+  const studentStreaks = useMemo(() => {
+    const streaks: Record<string, { currentStreak: number; lastClaimDate?: string; lastClaimStreak?: number }> = {};
+    
+    students.forEach((student) => {
+      const studentRecords = records
+        .filter((r) => r.studentId === student.studentId)
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      
+      // Get unique dates
+      const uniqueDates = studentRecords.reduce((acc, record) => {
+        if (!acc.find(r => r.date === record.date)) {
+          acc.push(record);
+        }
+        return acc;
+      }, [] as typeof studentRecords);
+
+      // Calculate current streak
+      let currentStreak = 0;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      for (const record of uniqueDates) {
+        const recordDate = new Date(record.date);
+        recordDate.setHours(0, 0, 0, 0);
+        if (recordDate > today) continue;
+        
+        if (record.status === "present" || record.status === "late") {
+          currentStreak++;
+        } else {
+          break;
+        }
+      }
+
+      // Get last claim for this student
+      const studentClaims = rewardsList
+        .filter((r) => r.studentId === student.studentId)
+        .sort((a, b) => new Date(b.claimedAt).getTime() - new Date(a.claimedAt).getTime());
+      
+      const lastClaim = studentClaims[0];
+
+      streaks[student.studentId] = {
+        currentStreak,
+        lastClaimDate: lastClaim?.claimedAt,
+        lastClaimStreak: lastClaim?.streakAtClaim,
+      };
+    });
+
+    return streaks;
+  }, [records, rewardsList]);
+
+  // Find pending reward claims (claimed but not received)
+  const pendingRewards = rewardsList.filter((r) => !r.rewardReceived);
+  // Find received rewards
+  const receivedRewards = rewardsList.filter((r) => r.rewardReceived);
+
+  const handleMarkRewardReceived = (rewardId: string) => {
+    const reward = rewardsList.find((r) => r.id === rewardId);
+    if (!reward) return;
+
+    const note = teacherNotes[rewardId] || "";
+    setRewardsList((prev) =>
+      prev.map((r) =>
+        r.id === rewardId
+          ? { ...r, rewardReceived: true, receivedAt: new Date().toISOString().split("T")[0], teacherNote: note }
+          : r
+      )
+    );
+    setTeacherNotes((prev) => {
+      const newNotes = { ...prev };
+      delete newNotes[rewardId];
+      return newNotes;
+    });
+    setSaveMessage("✅ Reward marked as received!");
+    setTimeout(() => setSaveMessage(""), 3000);
   };
 
   const presentCount = filteredRecords.filter((r) => r.status === "present").length;
@@ -369,6 +451,171 @@ export default function TeacherPage() {
             </div>
           </div>
         )}
+
+        {/* Reward Management Panel */}
+        <div className="mt-8">
+          <button
+            onClick={() => setShowRewardPanel(!showRewardPanel)}
+            className="flex items-center gap-2 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-medium transition-colors"
+          >
+            <span>🎁</span>
+            {showRewardPanel ? "Hide" : "Show"} Reward Management
+            {pendingRewards.length > 0 && (
+              <span className="ml-2 px-2 py-0.5 bg-red-500 text-white text-xs rounded-full">
+                {pendingRewards.length} pending
+              </span>
+            )}
+          </button>
+
+          {showRewardPanel && (
+            <div className="mt-4 space-y-6">
+              {/* Pending Rewards */}
+              <div className="bg-slate-800 rounded-xl border border-amber-700/50 overflow-hidden">
+                <div className="px-6 py-4 border-b border-slate-700 bg-amber-900/20">
+                  <h2 className="text-amber-300 font-semibold flex items-center gap-2">
+                    <span>⏳</span> Pending Rewards ({pendingRewards.length})
+                  </h2>
+                  <p className="text-amber-600 text-sm mt-0.5">
+                    Students who have claimed rewards but have not received them yet.
+                  </p>
+                </div>
+                {pendingRewards.length === 0 ? (
+                  <div className="p-8 text-center text-slate-500">
+                    <p className="text-4xl mb-3">🎉</p>
+                    <p>No pending rewards to process.</p>
+                  </div>
+                ) : (
+                  <div className="divide-y divide-slate-700/50">
+                    {pendingRewards.map((reward) => {
+                      const student = students.find((s) => s.studentId === reward.studentId);
+                      return (
+                        <div key={reward.id} className="px-6 py-4">
+                          <div className="flex items-start justify-between gap-4">
+                            <div>
+                              <p className="text-white font-medium">{student?.name || reward.studentId}</p>
+                              <p className="text-slate-500 text-sm">
+                                Streak: <span className="text-amber-400 font-bold">{reward.streakAtClaim} days</span> · 
+                                Claimed: {reward.claimedAt}
+                              </p>
+                            </div>
+                            <div className="flex flex-col items-end gap-2">
+                              <input
+                                type="text"
+                                placeholder="Add note (optional)..."
+                                value={teacherNotes[reward.id] || ""}
+                                onChange={(e) => setTeacherNotes((prev) => ({ ...prev, [reward.id]: e.target.value }))}
+                                className="bg-slate-900 border border-slate-600 text-white rounded px-3 py-1.5 text-sm w-48 focus:outline-none focus:border-amber-500"
+                              />
+                              <button
+                                onClick={() => handleMarkRewardReceived(reward.id)}
+                                className="px-4 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded text-sm font-medium transition-colors"
+                              >
+                                ✓ Mark as Received
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
+              {/* Students Eligible for Rewards */}
+              <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
+                <div className="px-6 py-4 border-b border-slate-700">
+                  <h2 className="text-white font-semibold flex items-center gap-2">
+                    <span>🔥</span> Student Streaks
+                  </h2>
+                  <p className="text-slate-500 text-sm mt-0.5">
+                    Current streaks. Students at 100+ days can claim rewards.
+                  </p>
+                </div>
+                <div className="p-4">
+                  <div className="grid gap-2">
+                    {students.map((student) => {
+                      const streak = studentStreaks[student.studentId];
+                      const canClaim = streak && streak.currentStreak >= 100;
+                      const hasPendingClaim = pendingRewards.some((r) => r.studentId === student.studentId);
+                      
+                      return (
+                        <div
+                          key={student.id}
+                          className={`flex items-center justify-between p-3 rounded-lg ${
+                            canClaim && !hasPendingClaim
+                              ? "bg-amber-900/30 border border-amber-700/50"
+                              : "bg-slate-900"
+                          }`}
+                        >
+                          <div>
+                            <p className="text-white font-medium">{student.name}</p>
+                            <p className="text-slate-500 text-xs">
+                              {student.studentId} · Class {student.class}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <p className={`font-bold ${canClaim ? "text-amber-400" : "text-white"}`}>
+                              {streak?.currentStreak || 0} days
+                            </p>
+                            {canClaim && !hasPendingClaim && (
+                              <p className="text-amber-400 text-xs">Can claim reward!</p>
+                            )}
+                            {hasPendingClaim && (
+                              <p className="text-blue-400 text-xs">Awaiting pickup</p>
+                            )}
+                            {streak?.lastClaimDate && (
+                              <p className="text-slate-600 text-xs">
+                                Last: {streak.lastClaimStreak}d on {streak.lastClaimDate}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              {/* Reward History */}
+              {receivedRewards.length > 0 && (
+                <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
+                  <div className="px-6 py-4 border-b border-slate-700 bg-green-900/20">
+                    <h2 className="text-green-300 font-semibold flex items-center gap-2">
+                      <span>✅</span> Reward History ({receivedRewards.length})
+                    </h2>
+                    <p className="text-green-600 text-sm mt-0.5">
+                      Rewards that have been successfully given to students.
+                    </p>
+                  </div>
+                  <div className="divide-y divide-slate-700/50">
+                    {receivedRewards.map((reward) => {
+                      const student = students.find((s) => s.studentId === reward.studentId);
+                      return (
+                        <div key={reward.id} className="px-6 py-4">
+                          <div className="flex items-start justify-between gap-4">
+                            <div>
+                              <p className="text-white font-medium">{student?.name || reward.studentId}</p>
+                              <p className="text-slate-500 text-sm">
+                                Streak: <span className="text-green-400 font-bold">{reward.streakAtClaim} days</span> · 
+                                Received: {reward.receivedAt}
+                              </p>
+                              {reward.teacherNote && (
+                                <p className="text-purple-400 text-sm mt-1">📝 {reward.teacherNote}</p>
+                              )}
+                            </div>
+                            <span className="px-2 py-1 bg-green-900 text-green-400 text-xs rounded-full">
+                              ✓ Received
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </main>
     </div>
     </AuthGuard>

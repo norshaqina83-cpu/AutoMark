@@ -29,6 +29,23 @@ export type AttendanceRecord = {
 };
 
 /**
+ * Tracks reward claims for students.
+ * A student can claim a reward every 100 days of consecutive attendance.
+ */
+export type RewardClaim = {
+  id: string;
+  studentId: string;
+  streakAtClaim: number;
+  claimedAt: string;
+  /** Whether the teacher has confirmed the reward was given to the student */
+  rewardReceived: boolean;
+  /** Date when teacher marked the reward as received */
+  receivedAt?: string;
+  /** Teacher notes about the reward */
+  teacherNote?: string;
+};
+
+/**
  * Configurable attendance time thresholds.
  * - Scans at or before `lateAfter` → Present
  * - Scans after `lateAfter` and at or before `absentAfter` → Late
@@ -242,3 +259,16 @@ export const attendanceRecords: AttendanceRecord[] = [
 ];
 
 export const classes = ["10A", "10B", "10C"];
+
+// Mock reward claims data
+export const rewardClaims: RewardClaim[] = [
+  {
+    id: "r1",
+    studentId: "STU001",
+    streakAtClaim: 100,
+    claimedAt: "2026-02-10",
+    rewardReceived: true,
+    receivedAt: "2026-02-12",
+    teacherNote: "Reward given: School supplies package",
+  },
+];
