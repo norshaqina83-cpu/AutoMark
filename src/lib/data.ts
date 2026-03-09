@@ -46,6 +46,19 @@ export type RewardClaim = {
 };
 
 /**
+ * Parent notification for manual attendance entry.
+ */
+export type ParentNotification = {
+  id: string;
+  studentId: string;
+  studentName: string;
+  date: string;
+  message: string;
+  read: boolean;
+  createdAt: string;
+};
+
+/**
  * Configurable attendance time thresholds.
  * - Scans at or before `lateAfter` → Present
  * - Scans after `lateAfter` and at or before `absentAfter` → Late
@@ -272,3 +285,6 @@ export const rewardClaims: RewardClaim[] = [
     teacherNote: "Reward given: School supplies package",
   },
 ];
+
+// Mock parent notifications
+export const parentNotifications: ParentNotification[] = [];

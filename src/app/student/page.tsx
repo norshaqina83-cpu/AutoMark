@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { useAuth } from "@/lib/auth";
-import { attendanceRecords, Student, RewardClaim, rewardClaims, AttendanceRecord } from "@/lib/data";
+import { attendanceRecords, Student, RewardClaim, rewardClaims, AttendanceRecord, parentNotifications, ParentNotification } from "@/lib/data";
 import AuthGuard from "@/components/AuthGuard";
 
 export default function StudentDashboard() {
@@ -13,6 +13,13 @@ export default function StudentDashboard() {
   
   // Use state for attendance records to allow manual entry
   const [studentAttendanceRecords, setStudentAttendanceRecords] = useState<AttendanceRecord[]>([]);
+  
+  // Use state for notifications (stored in localStorage)
+  const [notificationsList, setNotificationsList] = useState<ParentNotification[]>(() => {
+    if (typeof window === 'undefined') return [];
+    const stored = localStorage.getItem('parentNotifications');
+    return stored ? JSON.parse(stored) : [];
+  });
 
   // Manual RFID entry states
   const [manualId, setManualId] = useState("");
@@ -37,6 +44,24 @@ export default function StudentDashboard() {
     if (current + 1 >= 3) {
       setShowWarning(true);
     }
+  };
+
+  // Create parent notification for manual entry
+  const createParentNotification = (studentName: string, studentId: string) => {
+    if (typeof window === 'undefined') return;
+    const now = new Date();
+    const notification: ParentNotification = {
+      id: `notif_${now.getTime()}`,
+      studentId: studentId,
+      studentName: studentName,
+      date: now.toISOString().split('T')[0],
+      message: "Your child marked attendance using manual verification today.",
+      read: false,
+      createdAt: now.toISOString(),
+    };
+    const updated = [notification, ...notificationsList];
+    setNotificationsList(updated);
+    localStorage.setItem('parentNotifications', JSON.stringify(updated));
   };
 
   // Handle manual ID entry for forgotten RFID card
@@ -95,7 +120,11 @@ export default function StudentDashboard() {
 
     // Add to records (using state to avoid mutating original data)
     setStudentAttendanceRecords((prev) => [newRecord, ...prev]);
-    setManualEntryMessage({ type: "success", text: "Attendance recorded successfully! You are marked as Present." });
+    
+    // Create parent notification
+    createParentNotification(user.name, user.idNumber);
+    
+    setManualEntryMessage({ type: "success", text: "Attendance recorded successfully! You are marked as Present. Your parent has been notified." });
     setManualId("");
   };
 

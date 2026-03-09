@@ -4,7 +4,7 @@ import { useState } from "react";
 import Navbar from "@/components/layout/Navbar";
 import AuthGuard from "@/components/AuthGuard";
 import { useAuth } from "@/lib/auth";
-import { students, attendanceRecords, AttendanceRecord } from "@/lib/data";
+import { students, attendanceRecords, AttendanceRecord, ParentNotification } from "@/lib/data";
 
 function ParentPortalContent() {
   const { user } = useAuth();
@@ -22,6 +22,17 @@ function ParentPortalContent() {
   const [editingReasonId, setEditingReasonId] = useState<string | null>(null);
   const [reasonDraft, setReasonDraft] = useState("");
   const [reasonSaved, setReasonSaved] = useState("");
+
+  // Notifications state - load from localStorage
+  const [notifications, setNotifications] = useState<ParentNotification[]>(() => {
+    if (typeof window === 'undefined') return [];
+    const stored = localStorage.getItem('parentNotifications');
+    return stored ? JSON.parse(stored) : [];
+  });
+
+  // Get notifications for the selected student's parent
+  const studentNotifications = notifications.filter((n) => n.studentId === selectedStudentId);
+  const unreadCount = studentNotifications.filter((n) => !n.read).length;
 
   const selectedStudent = students.find((s) => s.studentId === selectedStudentId)!;
   const studentRecords = records
@@ -49,6 +60,15 @@ function ParentPortalContent() {
     setTimeout(() => setReasonSaved(""), 4000);
   };
 
+  // Mark notification as read
+  const markNotificationRead = (id: string) => {
+    const updated = notifications.map((n) =>
+      n.id === id ? { ...n, read: true } : n
+    );
+    setNotifications(updated);
+    localStorage.setItem('parentNotifications', JSON.stringify(updated));
+  };
+
   return (
     <div className="min-h-screen bg-slate-950 text-white">
       <Navbar />
@@ -72,6 +92,40 @@ function ParentPortalContent() {
             administrators will be able to see your submitted reasons.
           </p>
         </div>
+
+        {/* Notifications Section */}
+        {studentNotifications.length > 0 && (
+          <div className="mb-6 bg-amber-950/30 border border-amber-700/50 rounded-xl p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-lg font-semibold text-amber-400 flex items-center gap-2">
+                <span>🔔</span> Notifications
+                {unreadCount > 0 && (
+                  <span className="bg-amber-500 text-slate-900 text-xs px-2 py-0.5 rounded-full font-bold">
+                    {unreadCount}
+                  </span>
+                )}
+              </h2>
+            </div>
+            <div className="space-y-2">
+              {studentNotifications.slice(0, 5).map((notif) => (
+                <div
+                  key={notif.id}
+                  className={`p-3 rounded-lg border ${
+                    notif.read
+                      ? "bg-slate-800/50 border-slate-700"
+                      : "bg-amber-900/30 border-amber-700"
+                  }`}
+                  onClick={() => markNotificationRead(notif.id)}
+                >
+                  <p className={`text-sm ${notif.read ? "text-slate-400" : "text-amber-200"}`}>
+                    {notif.message}
+                  </p>
+                  <p className="text-xs text-slate-500 mt-1">{notif.date}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Student Selector — only admins can switch students */}
         {isAdmin ? (
