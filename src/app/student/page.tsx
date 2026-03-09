@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { useAuth } from "@/lib/auth";
-import { attendanceRecords, Student, RewardClaim, rewardClaims } from "@/lib/data";
+import { attendanceRecords, Student, RewardClaim, rewardClaims, AttendanceRecord } from "@/lib/data";
 import AuthGuard from "@/components/AuthGuard";
 
 export default function StudentDashboard() {
@@ -10,12 +10,103 @@ export default function StudentDashboard() {
   const [selectedPeriod, setSelectedPeriod] = useState<"week" | "month" | "all">("month");
   const [claimedReward, setClaimedReward] = useState(false);
   const [rewardsList, setRewardsList] = useState<RewardClaim[]>([...rewardClaims]);
+  
+  // Use state for attendance records to allow manual entry
+  const [studentAttendanceRecords, setStudentAttendanceRecords] = useState<AttendanceRecord[]>([]);
+
+  // Manual RFID entry states
+  const [manualId, setManualId] = useState("");
+  const [manualEntryMessage, setManualEntryMessage] = useState<{ type: "success" | "error" | "warning"; text: string } | null>(null);
+  const [showWarning, setShowWarning] = useState(false);
+
+  // Get today's date key for tracking attempts
+  const getTodayKey = () => `manualAttendance_${user?.idNumber}_${new Date().toISOString().split('T')[0]}`;
+
+  // Get number of attempts today
+  const getAttemptsToday = (): number => {
+    if (typeof window === 'undefined') return 0;
+    const stored = localStorage.getItem(getTodayKey());
+    return stored ? parseInt(stored, 10) : 0;
+  };
+
+  // Increment attempts
+  const incrementAttempts = () => {
+    if (typeof window === 'undefined') return;
+    const current = getAttemptsToday();
+    localStorage.setItem(getTodayKey(), String(current + 1));
+    if (current + 1 >= 3) {
+      setShowWarning(true);
+    }
+  };
+
+  // Handle manual ID entry for forgotten RFID card
+  const handleManualEntry = () => {
+    if (!user || !manualId.trim()) {
+      setManualEntryMessage({ type: "error", text: "Please enter your Student ID" });
+      return;
+    }
+
+    const attempts = getAttemptsToday();
+    
+    // Check if exceeded 3 attempts
+    if (attempts >= 3) {
+      setManualEntryMessage({ type: "warning", text: "You have exceeded 3 manual entry attempts today. Please contact your teacher or administrator." });
+      setShowWarning(true);
+      return;
+    }
+
+    // Verify the ID matches the logged-in student
+    if (manualId.trim().toUpperCase() !== user.idNumber) {
+      incrementAttempts();
+      const newAttempts = attempts + 1;
+      if (newAttempts >= 3) {
+        setManualEntryMessage({ type: "warning", text: `Incorrect ID. You have used ${newAttempts}/3 attempts today. Please contact your teacher or administrator.` });
+        setShowWarning(true);
+      } else {
+        setManualEntryMessage({ type: "error", text: `Incorrect Student ID. You have ${3 - newAttempts} attempt(s) remaining today.` });
+      }
+      setManualId("");
+      return;
+    }
+
+    // Check if already recorded today
+    const today = new Date().toISOString().split('T')[0];
+    const alreadyRecorded = studentRecords.some(r => r.date === today);
+    if (alreadyRecorded) {
+      setManualEntryMessage({ type: "error", text: "You have already recorded your attendance today!" });
+      setManualId("");
+      return;
+    }
+
+    // Success - record attendance manually
+    const now = new Date();
+    const time = now.toTimeString().slice(0, 5);
+    const recordId = `manual_${now.getTime()}`;
+    const newRecord: AttendanceRecord = {
+      id: recordId,
+      studentId: user.idNumber,
+      studentName: user.name,
+      class: studentInfo?.class || "",
+      date: today,
+      time: time,
+      status: "present", // Manual entry is considered present
+      rfidTag: "MANUAL_ENTRY",
+    };
+
+    // Add to records (using state to avoid mutating original data)
+    setStudentAttendanceRecords((prev) => [newRecord, ...prev]);
+    setManualEntryMessage({ type: "success", text: "Attendance recorded successfully! You are marked as Present." });
+    setManualId("");
+  };
 
   // Get student's attendance records
+  // eslint-disable-next-line react-hooks/preserve-manual-memoization
   const studentRecords = useMemo(() => {
     if (!user) return [];
-    return attendanceRecords.filter((record) => record.studentId === user.idNumber);
-  }, [user]);
+    // Combine original records with any manually added ones
+    const baseRecords = attendanceRecords.filter((record) => record.studentId === user.idNumber);
+    return [...baseRecords, ...studentAttendanceRecords];
+  }, [user, studentAttendanceRecords]);
 
   // Get student info
   const studentInfo = useMemo((): Student | null => {
@@ -248,6 +339,77 @@ export default function StudentDashboard() {
               </div>
             </div>
           )}
+
+          {/* Forgot RFID Card - Manual Entry Section */}
+          <div className="bg-slate-800 border border-slate-700 rounded-2xl p-6 mb-8">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white text-xl flex-shrink-0">
+                💳
+              </div>
+              <div className="flex-1">
+                <h2 className="text-xl font-semibold text-white mb-2">Forgot Your RFID Card?</h2>
+                <p className="text-slate-400 text-sm mb-4">
+                  If you forgot your RFID card, you can manually enter your Student ID to record attendance. 
+                  You have <span className="text-amber-400 font-bold">{3 - getAttemptsToday()}</span> attempt(s) remaining today.
+                </p>
+
+                {/* Warning message */}
+                {showWarning && (
+                  <div className="mb-4 p-4 bg-red-500/20 border border-red-500 rounded-lg">
+                    <div className="flex items-center gap-2 text-red-400 font-semibold mb-1">
+                      <span>⚠️</span>
+                      <span>Warning: Manual Entry Limit Reached</span>
+                    </div>
+                    <p className="text-red-300 text-sm">
+                      You have exceeded 3 manual entry attempts today. Please contact your teacher or administrator 
+                      to record your attendance manually.
+                    </p>
+                  </div>
+                )}
+
+                {/* Status message */}
+                {manualEntryMessage && !showWarning && (
+                  <div className={`mb-4 p-4 rounded-lg ${
+                    manualEntryMessage.type === "success" ? "bg-green-500/20 border border-green-500" :
+                    manualEntryMessage.type === "warning" ? "bg-red-500/20 border border-red-500" :
+                    "bg-red-500/20 border border-red-500"
+                  }`}>
+                    <p className={`text-sm ${
+                      manualEntryMessage.type === "success" ? "text-green-400" :
+                      manualEntryMessage.type === "warning" ? "text-red-400" :
+                      "text-red-400"
+                    }`}>
+                      {manualEntryMessage.text}
+                    </p>
+                  </div>
+                )}
+
+                {/* Manual entry form */}
+                {!showWarning && (
+                  <div className="flex gap-3">
+                    <input
+                      type="text"
+                      value={manualId}
+                      onChange={(e) => setManualId(e.target.value.toUpperCase())}
+                      placeholder="Enter your Student ID (e.g., STU001)"
+                      className="flex-1 px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-blue-500"
+                      onKeyPress={(e) => e.key === "Enter" && handleManualEntry()}
+                    />
+                    <button
+                      onClick={handleManualEntry}
+                      className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors"
+                    >
+                      Record
+                    </button>
+                  </div>
+                )}
+
+                <p className="text-slate-500 text-xs mt-3">
+                  Note: Manual entries are limited to 3 attempts per day. Repeated forgotten cards may require contacting administration.
+                </p>
+              </div>
+            </div>
+          </div>
 
           {/* Streak Display */}
           <div className="mb-8">
