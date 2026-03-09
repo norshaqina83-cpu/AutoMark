@@ -55,6 +55,11 @@ A complete digital attendance management system using RFID technology (RC522 rea
   - [x] Teacher can mark rewards as received with optional notes
   - [x] Reward history tracking with received status
   - [x] Students can claim new reward after 100 more days from last claim
+- [x] **Manual RFID Entry**:
+  - [x] Students can manually type their ID if they forgot RFID card
+  - [x] Limited to 3 attempts per day (stored in localStorage)
+  - [x] Warning displayed after exceeding 3 attempts
+  - [x] ID must match logged-in student's ID to record attendance
 
 ## Current Structure
 
@@ -68,7 +73,7 @@ A complete digital attendance management system using RFID technology (RC522 rea
 | `src/app/cards/page.tsx` | RFID card manager | ✅ Ready |
 | `src/app/parent/page.tsx` | Parent portal + absence reasons | ✅ Ready |
 | `src/app/students/page.tsx` | Student registry | ✅ Ready |
-| `src/app/student/page.tsx` | Student dashboard + streak tracking + reward claims | ✅ Ready |
+| `src/app/student/page.tsx` | Student dashboard + streak tracking + reward claims + manual RFID entry | ✅ Ready |
 | `src/app/api/attendance/route.ts` | Attendance API (GET/POST/PATCH/PUT) | ✅ Ready |
 | `src/app/api/cards/route.ts` | RFID card API | ✅ Ready |
 | `src/components/layout/Navbar.tsx` | Navigation bar | ✅ Ready |
@@ -123,3 +128,4 @@ Users log in with their **ID number** (e.g. `ADM001`, `TCH001`, `PAR001`) + pass
 | 2026-03-03 | Added streak system with reward claims - streak resets when absent, claim reward at 100 days |
 | 2026-03-03 | Added teacher reward management panel - view pending, mark as received, track history |
 | 2026-03-03 | Students can claim new reward after 100+ days from last claim streak |
+| 2026-03-09 | Added manual RFID entry for forgotten cards - 3 attempts per day limit with warning |
