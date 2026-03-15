@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>AutoMarks Attendance</title>
+<style>
+table{
+  border-collapse: collapse;
+  width: 60%;
+}
+th, td{
+  padding:10px;
+  border:1px solid black;
+  text-align:center;
+}
+</style>
+</head>
+
+<body>
+
+<h2>AutoMarks Attendance System</h2>
+
+<table id="attendanceTable">
+<tr>
+<th>UID</th>
+<th>Status</th>
+<th>Date</th>
+<th>Time</th>
+</tr>
+</table>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+<script>
+
+// Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyA3p1DwnUDefu2rDG5-bDY-BxNbJTLCzXY",
+  databaseURL: "https://automarks-db9fc-default-rtdb.asia-southeast1.firebasedatabase.app"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+
+// Reference attendance data
+const db = firebase.database().ref("attendance");
+
+db.on("value", function(snapshot){
+
+  const data = snapshot.val();
+  const table = document.getElementById("attendanceTable");
+
+  // Reset table header
+  table.innerHTML = `
+  <tr>
+    <th>UID</th>
+    <th>Status</th>
+    <th>Date</th>
+    <th>Time</th>
+  </tr>
+  `;
+
+  // Stop if database empty
+  if(!data){
+    console.log("No attendance data yet");
+    return;
+  }
+
+  // Loop through Firebase data
+  for(const uid in data){
+
+    const status = data[uid].status || "-";
+    const date = data[uid].date || "-";
+    const time = data[uid].time || "-";
+
+    const row = `
+    <tr>
+      <td>${uid}</td>
+      <td>${status}</td>
+      <td>${date}</td>
+      <td>${time}</td>
+    </tr>
+    `;
+
+    table.innerHTML += row;
+  }
+
+});
+
+</script>
+
+</body>
+</html>
