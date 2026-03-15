@@ -26,6 +26,7 @@ export default function AuthGuard({ allowedRoles, children }: Props) {
         admin: "/",
         teacher: "/teacher",
         parent: "/parent",
+        student: "/student",
       };
       router.replace(roleHome[user.role]);
     }

@@ -21,12 +21,16 @@ const NAV_LINKS_BY_ROLE: Record<UserRole, NavLink[]> = {
   parent: [
     { href: "/parent", label: "My Child", icon: "👨‍👩‍👧" },
   ],
+  student: [
+    { href: "/student", label: "Dashboard", icon: "📊" },
+  ],
 };
 
 const ROLE_BADGE: Record<UserRole, { label: string; color: string }> = {
   admin: { label: "Admin", color: "bg-purple-700 text-purple-200" },
   teacher: { label: "Teacher", color: "bg-blue-700 text-blue-200" },
   parent: { label: "Parent", color: "bg-green-700 text-green-200" },
+  student: { label: "Student", color: "bg-amber-700 text-amber-200" },
 };
 
 export default function Navbar() {
@@ -45,10 +49,10 @@ export default function Navbar() {
   return (
     <nav className="bg-slate-900 border-b border-slate-700 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-center">
           {/* Logo */}
-          <Link href={user ? (user.role === "parent" ? "/parent" : user.role === "teacher" ? "/teacher" : "/") : "/login"} className="flex items-center gap-2">
-            <img src="/workspaces/AutoMark/public/logo.png" alt="RFID Attendance Logo" className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-sm" />
+          <Link href={user ? (user.role === "parent" ? "/parent" : user.role === "teacher" ? "/teacher" : user.role === "student" ? "/student" : "/") : "/login"} className="flex items-center gap-2">
+            <img src="/logo.png" alt="Logo" className="w-16 h-16 rounded-2xl mb-4 object-cover mx-auto"/>
             <span className="text-white font-semibold text-lg hidden sm:block">
               AutoMark
             </span>

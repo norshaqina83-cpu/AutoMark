@@ -38,6 +38,29 @@ A complete digital attendance management system using RFID technology (RC522 rea
   - [x] Parent portal: submit absence reason per absent record (editable)
   - [x] Teacher portal: view parent-submitted absence reasons + add/edit teacher notes
   - [x] `absentReason` and `teacherNote` fields added to `AttendanceRecord` type
+- [x] **Student Dashboard**:
+  - [x] Add `student` role to UserRole type in auth system
+  - [x] Add student users (STU001-STU006) with passwords
+  - [x] Create student dashboard at `/student` with attendance rate display
+  - [x] Filter by period (7 days, 30 days, all time)
+  - [x] Show recent attendance records with status
+  - [x] Update navbar with student-specific navigation and badge
+- [x] **Streak System & Rewards**:
+  - [x] Replace attendance rate with streak tracking (consecutive present/late days)
+  - [x] Streak resets to 0 when student is absent for a day
+  - [x] Add reward claim functionality when streak reaches 100 days
+  - [x] Show current streak, longest streak, and progress bar
+  - [x] Add encouraging messages based on streak milestones
+  - [x] Students must contact teacher to receive reward after claiming
+  - [x] Teacher can mark rewards as received with optional notes
+  - [x] Reward history tracking with received status
+  - [x] Students can claim new reward after 100 more days from last claim
+- [x] **Manual RFID Entry**:
+  - [x] Students can manually type their ID if they forgot RFID card
+  - [x] Limited to 3 attempts per day (stored in localStorage)
+  - [x] Warning displayed after exceeding 3 attempts
+  - [x] ID must match logged-in student's ID to record attendance
+  - [x] **Parent Notification**: Automatic notification to parent when student uses manual entry ("Your child marked attendance using manual verification today")
 
 ## Current Structure
 
@@ -51,6 +74,7 @@ A complete digital attendance management system using RFID technology (RC522 rea
 | `src/app/cards/page.tsx` | RFID card manager | ✅ Ready |
 | `src/app/parent/page.tsx` | Parent portal + absence reasons | ✅ Ready |
 | `src/app/students/page.tsx` | Student registry | ✅ Ready |
+| `src/app/student/page.tsx` | Student dashboard + streak tracking + reward claims + manual RFID entry | ✅ Ready |
 | `src/app/api/attendance/route.ts` | Attendance API (GET/POST/PATCH/PUT) | ✅ Ready |
 | `src/app/api/cards/route.ts` | RFID card API | ✅ Ready |
 | `src/components/layout/Navbar.tsx` | Navigation bar | ✅ Ready |
@@ -85,6 +109,7 @@ Users log in with their **ID number** (e.g. `ADM001`, `TCH001`, `PAR001`) + pass
 | Admin | ADM001 | Full read + write + settings | `/`, `/teacher`, `/cards`, `/students`, `/parent` |
 | Teacher | TCH001 | Read + write attendance | `/teacher`, `/cards`, `/students` |
 | Parent | PAR001–PAR006 | View + submit absence reasons | `/parent` (own child only) |
+| Student | STU001–STU006 | View own attendance streak & claim rewards | `/student` |
 
 ### Absence Reason Workflow
 1. Student is absent → no RFID scan recorded
@@ -100,3 +125,9 @@ Users log in with their **ID number** (e.g. `ADM001`, `TCH001`, `PAR001`) + pass
 | 2026-02-25 | Full RFID attendance system built — 5 pages, 2 API routes, shared data layer |
 | 2026-02-25 | Role-based auth added — login page, AuthProvider, AuthGuard, role-specific nav |
 | 2026-02-25 | ID-based login, configurable time thresholds, absence reasons, teacher notes |
+| 2026-03-03 | Added student role and dashboard with attendance rate |
+| 2026-03-03 | Added streak system with reward claims - streak resets when absent, claim reward at 100 days |
+| 2026-03-03 | Added teacher reward management panel - view pending, mark as received, track history |
+| 2026-03-03 | Students can claim new reward after 100+ days from last claim streak |
+| 2026-03-09 | Added manual RFID entry for forgotten cards - 3 attempts per day limit with warning |
+| 2026-03-09 | Added automatic parent notification when student uses manual entry - notification shown in parent portal |
