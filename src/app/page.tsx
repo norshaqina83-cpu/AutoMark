@@ -12,8 +12,8 @@ function AdminDashboardContent() {
   const presentToday = todayRecords.filter((r) => r.status === "present").length;
   const lateToday = todayRecords.filter((r) => r.status === "late").length;
   const absentToday = todayRecords.filter((r) => r.status === "absent").length;
-  const activeCards = students.filter((s) => s.rfidStatus === "active").length;
-  const inactiveCards = students.filter((s) => s.rfidStatus === "inactive").length;
+  const activeCards = students.filter((s) => s.fingerprintStatus === "active").length;
+  const inactiveCards = students.filter((s) => s.fingerprintStatus === "inactive").length;
 
   const recentScans = attendanceRecords
     .filter((r) => r.time !== "")
@@ -243,7 +243,7 @@ function AdminDashboardContent() {
                   <div>
                     <p className="text-white text-sm font-medium">{scan.studentName}</p>
                     <p className="text-slate-500 text-xs">
-                      {scan.rfidTag} · Class {scan.class}
+                      {scan.fingerprintId} · Class {scan.class}
                     </p>
                   </div>
                   <div className="text-right">

@@ -1,4 +1,4 @@
-// Mock data store for the RFID Attendance System
+// Mock data store for the Fingerprint Attendance System
 // In production, this would be replaced with a real database
 
 export type Student = {
@@ -6,8 +6,8 @@ export type Student = {
   name: string;
   studentId: string;
   class: string;
-  rfidTag: string;
-  rfidStatus: "active" | "inactive";
+  fingerprintId: string;
+  fingerprintStatus: "active" | "inactive";
   parentEmail: string;
   parentName: string;
 };
@@ -20,12 +20,11 @@ export type AttendanceRecord = {
   date: string;
   time: string;
   status: "present" | "absent" | "late";
-  rfidTag: string;
+  fingerprintId: string;
   correctedBy?: string;
-  /** Reason for absence submitted by parent */
   absentReason?: string;
-  /** Internal note added by teacher/admin */
   teacherNote?: string;
+  truancyNotified?: boolean;
 };
 
 /**
@@ -83,8 +82,8 @@ export const students: Student[] = [
     name: "Alice Johnson",
     studentId: "STU001",
     class: "10A",
-    rfidTag: "RFID-A1B2C3",
-    rfidStatus: "active",
+    fingerprintId: "FP-A1B2C3",
+    fingerprintStatus: "active",
     parentEmail: "parent.alice@email.com",
     parentName: "Mr. Johnson",
   },
@@ -93,8 +92,8 @@ export const students: Student[] = [
     name: "Bob Smith",
     studentId: "STU002",
     class: "10A",
-    rfidTag: "RFID-D4E5F6",
-    rfidStatus: "active",
+    fingerprintId: "FP-D4E5F6",
+    fingerprintStatus: "active",
     parentEmail: "parent.bob@email.com",
     parentName: "Mrs. Smith",
   },
@@ -103,8 +102,8 @@ export const students: Student[] = [
     name: "Carol White",
     studentId: "STU003",
     class: "10B",
-    rfidTag: "RFID-G7H8I9",
-    rfidStatus: "inactive",
+    fingerprintId: "FP-G7H8I9",
+    fingerprintStatus: "inactive",
     parentEmail: "parent.carol@email.com",
     parentName: "Mr. White",
   },
@@ -113,8 +112,8 @@ export const students: Student[] = [
     name: "David Brown",
     studentId: "STU004",
     class: "10B",
-    rfidTag: "RFID-J1K2L3",
-    rfidStatus: "active",
+    fingerprintId: "FP-J1K2L3",
+    fingerprintStatus: "active",
     parentEmail: "parent.david@email.com",
     parentName: "Mrs. Brown",
   },
@@ -123,8 +122,8 @@ export const students: Student[] = [
     name: "Emma Davis",
     studentId: "STU005",
     class: "10A",
-    rfidTag: "RFID-M4N5O6",
-    rfidStatus: "active",
+    fingerprintId: "FP-M4N5O6",
+    fingerprintStatus: "active",
     parentEmail: "parent.emma@email.com",
     parentName: "Mr. Davis",
   },
@@ -133,8 +132,8 @@ export const students: Student[] = [
     name: "Frank Wilson",
     studentId: "STU006",
     class: "10C",
-    rfidTag: "RFID-P7Q8R9",
-    rfidStatus: "active",
+    fingerprintId: "FP-P7Q8R9",
+    fingerprintStatus: "active",
     parentEmail: "parent.frank@email.com",
     parentName: "Mrs. Wilson",
   },
@@ -150,7 +149,7 @@ export const attendanceRecords: AttendanceRecord[] = [
     date: "2026-02-25",
     time: "06:55",
     status: "present",
-    rfidTag: "RFID-A1B2C3",
+    fingerprintId: "FP-A1B2C3",
   },
   {
     id: "a2",
@@ -160,7 +159,7 @@ export const attendanceRecords: AttendanceRecord[] = [
     date: "2026-02-25",
     time: "08:15",
     status: "late",
-    rfidTag: "RFID-D4E5F6",
+    fingerprintId: "FP-D4E5F6",
   },
   {
     id: "a3",
@@ -170,7 +169,7 @@ export const attendanceRecords: AttendanceRecord[] = [
     date: "2026-02-25",
     time: "",
     status: "absent",
-    rfidTag: "RFID-M4N5O6",
+    fingerprintId: "FP-M4N5O6",
     absentReason: "Sick with fever — will return tomorrow.",
   },
   {
@@ -181,7 +180,7 @@ export const attendanceRecords: AttendanceRecord[] = [
     date: "2026-02-25",
     time: "06:58",
     status: "present",
-    rfidTag: "RFID-J1K2L3",
+    fingerprintId: "FP-J1K2L3",
   },
   {
     id: "a8",
@@ -191,7 +190,7 @@ export const attendanceRecords: AttendanceRecord[] = [
     date: "2026-02-25",
     time: "07:00",
     status: "present",
-    rfidTag: "RFID-P7Q8R9",
+    fingerprintId: "FP-P7Q8R9",
   },
   // Day 1 - 2026-02-24
   {
@@ -202,7 +201,7 @@ export const attendanceRecords: AttendanceRecord[] = [
     date: "2026-02-24",
     time: "07:01",
     status: "present",
-    rfidTag: "RFID-A1B2C3",
+    fingerprintId: "FP-A1B2C3",
   },
   {
     id: "a6",
@@ -212,7 +211,7 @@ export const attendanceRecords: AttendanceRecord[] = [
     date: "2026-02-24",
     time: "",
     status: "absent",
-    rfidTag: "RFID-D4E5F6",
+    fingerprintId: "FP-D4E5F6",
     absentReason: "Family emergency.",
     teacherNote: "Parent called in advance.",
   },
@@ -224,7 +223,7 @@ export const attendanceRecords: AttendanceRecord[] = [
     date: "2026-02-24",
     time: "07:05",
     status: "present",
-    rfidTag: "RFID-M4N5O6",
+    fingerprintId: "FP-M4N5O6",
   },
   {
     id: "a9",
@@ -234,7 +233,7 @@ export const attendanceRecords: AttendanceRecord[] = [
     date: "2026-02-24",
     time: "06:50",
     status: "present",
-    rfidTag: "RFID-J1K2L3",
+    fingerprintId: "FP-J1K2L3",
   },
   {
     id: "a10",
@@ -244,29 +243,29 @@ export const attendanceRecords: AttendanceRecord[] = [
     date: "2026-02-24",
     time: "07:02",
     status: "present",
-    rfidTag: "RFID-P7Q8R9",
+    fingerprintId: "FP-P7Q8R9",
   },
   // Day 2 - 2026-02-23
-  { id: "a11", studentId: "STU001", studentName: "Alice Johnson", class: "10A", date: "2026-02-23", time: "06:58", status: "present", rfidTag: "RFID-A1B2C3" },
-  { id: "a12", studentId: "STU002", studentName: "Bob Smith", class: "10A", date: "2026-02-23", time: "07:00", status: "present", rfidTag: "RFID-D4E5F6" },
-  { id: "a13", studentId: "STU003", studentName: "Carol White", class: "10B", date: "2026-02-23", time: "", status: "absent", rfidTag: "RFID-G7H8I9" },
-  { id: "a14", studentId: "STU004", studentName: "David Brown", class: "10B", date: "2026-02-23", time: "06:55", status: "present", rfidTag: "RFID-J1K2L3" },
-  { id: "a15", studentId: "STU005", studentName: "Emma Davis", class: "10A", date: "2026-02-23", time: "07:01", status: "present", rfidTag: "RFID-M4N5O6" },
-  { id: "a16", studentId: "STU006", studentName: "Frank Wilson", class: "10C", date: "2026-02-23", time: "06:59", status: "present", rfidTag: "RFID-P7Q8R9" },
+  { id: "a11", studentId: "STU001", studentName: "Alice Johnson", class: "10A", date: "2026-02-23", time: "06:58", status: "present", fingerprintId: "FP-A1B2C3" },
+  { id: "a12", studentId: "STU002", studentName: "Bob Smith", class: "10A", date: "2026-02-23", time: "07:00", status: "present", fingerprintId: "FP-D4E5F6" },
+  { id: "a13", studentId: "STU003", studentName: "Carol White", class: "10B", date: "2026-02-23", time: "", status: "absent", fingerprintId: "FP-G7H8I9" },
+  { id: "a14", studentId: "STU004", studentName: "David Brown", class: "10B", date: "2026-02-23", time: "06:55", status: "present", fingerprintId: "FP-J1K2L3" },
+  { id: "a15", studentId: "STU005", studentName: "Emma Davis", class: "10A", date: "2026-02-23", time: "07:01", status: "present", fingerprintId: "FP-M4N5O6" },
+  { id: "a16", studentId: "STU006", studentName: "Frank Wilson", class: "10C", date: "2026-02-23", time: "06:59", status: "present", fingerprintId: "FP-P7Q8R9" },
   // Day 3 - 2026-02-22
-  { id: "a17", studentId: "STU001", studentName: "Alice Johnson", class: "10A", date: "2026-02-22", time: "07:00", status: "present", rfidTag: "RFID-A1B2C3" },
-  { id: "a18", studentId: "STU002", studentName: "Bob Smith", class: "10A", date: "2026-02-22", time: "06:52", status: "present", rfidTag: "RFID-D4E5F6" },
-  { id: "a19", studentId: "STU003", studentName: "Carol White", class: "10B", date: "2026-02-22", time: "07:05", status: "present", rfidTag: "RFID-G7H8I9" },
-  { id: "a20", studentId: "STU004", studentName: "David Brown", class: "10B", date: "2026-02-22", time: "06:48", status: "present", rfidTag: "RFID-J1K2L3" },
-  { id: "a21", studentId: "STU005", studentName: "Emma Davis", class: "10A", date: "2026-02-22", time: "", status: "absent", rfidTag: "RFID-M4N5O6" },
-  { id: "a22", studentId: "STU006", studentName: "Frank Wilson", class: "10C", date: "2026-02-22", time: "07:00", status: "present", rfidTag: "RFID-P7Q8R9" },
+  { id: "a17", studentId: "STU001", studentName: "Alice Johnson", class: "10A", date: "2026-02-22", time: "07:00", status: "present", fingerprintId: "FP-A1B2C3" },
+  { id: "a18", studentId: "STU002", studentName: "Bob Smith", class: "10A", date: "2026-02-22", time: "06:52", status: "present", fingerprintId: "FP-D4E5F6" },
+  { id: "a19", studentId: "STU003", studentName: "Carol White", class: "10B", date: "2026-02-22", time: "07:05", status: "present", fingerprintId: "FP-G7H8I9" },
+  { id: "a20", studentId: "STU004", studentName: "David Brown", class: "10B", date: "2026-02-22", time: "06:48", status: "present", fingerprintId: "FP-J1K2L3" },
+  { id: "a21", studentId: "STU005", studentName: "Emma Davis", class: "10A", date: "2026-02-22", time: "", status: "absent", fingerprintId: "FP-M4N5O6" },
+  { id: "a22", studentId: "STU006", studentName: "Frank Wilson", class: "10C", date: "2026-02-22", time: "07:00", status: "present", fingerprintId: "FP-P7Q8R9" },
   // Day 4 - 2026-02-21
-  { id: "a23", studentId: "STU001", studentName: "Alice Johnson", class: "10A", date: "2026-02-21", time: "06:55", status: "present", rfidTag: "RFID-A1B2C3" },
-  { id: "a24", studentId: "STU002", studentName: "Bob Smith", class: "10A", date: "2026-02-21", time: "07:10", status: "late", rfidTag: "RFID-D4E5F6" },
-  { id: "a25", studentId: "STU003", studentName: "Carol White", class: "10B", date: "2026-02-21", time: "06:58", status: "present", rfidTag: "RFID-G7H8I9" },
-  { id: "a26", studentId: "STU004", studentName: "David Brown", class: "10B", date: "2026-02-21", time: "06:50", status: "present", rfidTag: "RFID-J1K2L3" },
-  { id: "a27", studentId: "STU005", studentName: "Emma Davis", class: "10A", date: "2026-02-21", time: "06:55", status: "present", rfidTag: "RFID-M4N5O6" },
-  { id: "a28", studentId: "STU006", studentName: "Frank Wilson", class: "10C", date: "2026-02-21", time: "07:02", status: "present", rfidTag: "RFID-P7Q8R9" },
+  { id: "a23", studentId: "STU001", studentName: "Alice Johnson", class: "10A", date: "2026-02-21", time: "06:55", status: "present", fingerprintId: "FP-A1B2C3" },
+  { id: "a24", studentId: "STU002", studentName: "Bob Smith", class: "10A", date: "2026-02-21", time: "07:10", status: "late", fingerprintId: "FP-D4E5F6" },
+  { id: "a25", studentId: "STU003", studentName: "Carol White", class: "10B", date: "2026-02-21", time: "06:58", status: "present", fingerprintId: "FP-G7H8I9" },
+  { id: "a26", studentId: "STU004", studentName: "David Brown", class: "10B", date: "2026-02-21", time: "06:50", status: "present", fingerprintId: "FP-J1K2L3" },
+  { id: "a27", studentId: "STU005", studentName: "Emma Davis", class: "10A", date: "2026-02-21", time: "06:55", status: "present", fingerprintId: "FP-M4N5O6" },
+  { id: "a28", studentId: "STU006", studentName: "Frank Wilson", class: "10C", date: "2026-02-21", time: "07:02", status: "present", fingerprintId: "FP-P7Q8R9" },
   // Generate 95 more days of records (days 5-99) with varying attendance
   // This creates a realistic streak system where different students have different streaks
 ];

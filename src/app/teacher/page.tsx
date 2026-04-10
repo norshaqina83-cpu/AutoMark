@@ -77,7 +77,7 @@ export default function TeacherPage() {
       date: selectedDate,
       time: "",
       status: "absent",
-      rfidTag: students.find((s) => s.studentId === studentId)?.rfidTag || "",
+      fingerprintId: students.find((s) => s.studentId === studentId)?.fingerprintId || "",
     };
     setRecords((prev) => [...prev, newRecord]);
   };
@@ -256,7 +256,7 @@ export default function TeacherPage() {
                     <div className="flex-1 min-w-0">
                       <p className="text-white font-medium">{record.studentName}</p>
                       <p className="text-slate-500 text-xs">
-                        {record.studentId} · <span className="font-mono">{record.rfidTag}</span>
+                        {record.studentId} · <span className="font-mono">{record.fingerprintId}</span>
                         {record.time ? ` · Scanned ${record.time}` : " · No scan"}
                       </p>
                       {record.correctedBy && (
@@ -428,15 +428,15 @@ export default function TeacherPage() {
                   <div>
                     <p className="text-white font-medium">{student.name}</p>
                     <p className="text-slate-500 text-xs">
-                      {student.studentId} · {student.rfidTag} ·{" "}
+                      {student.studentId} · {student.fingerprintId} ·{" "}
                       <span
                         className={
-                          student.rfidStatus === "active"
+                          student.fingerprintStatus === "active"
                             ? "text-green-400"
                             : "text-red-400"
                         }
                       >
-                        Card {student.rfidStatus}
+                        {student.fingerprintStatus.charAt(0).toUpperCase() + student.fingerprintStatus.slice(1)}
                       </span>
                     </p>
                   </div>

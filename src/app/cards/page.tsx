@@ -24,15 +24,15 @@ export default function CardsPage() {
     setStudents((prev) =>
       prev.map((s) =>
         s.studentId === studentId
-          ? { ...s, rfidStatus: action === "deactivate" ? "inactive" : "active" }
+          ? { ...s, fingerprintStatus: action === "deactivate" ? "inactive" : "active" }
           : s
       )
     );
     setConfirmAction(null);
     if (action === "deactivate") {
-      showMessage(`🔴 Card deactivated. Student must pay replacement fee to get a new card.`);
+      showMessage(`🔴 Fingerprint deactivated. Student must re-enroll to scan in.`);
     } else {
-      showMessage(`🟢 Card reactivated successfully. Student can now scan in.`);
+      showMessage(`🟢 Fingerprint reactivated successfully. Student can now scan in.`);
     }
   };
 
@@ -40,14 +40,14 @@ export default function CardsPage() {
     const matchesSearch =
       s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       s.studentId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      s.rfidTag.toLowerCase().includes(searchQuery.toLowerCase());
+      s.fingerprintId.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesFilter =
-      filterStatus === "all" || s.rfidStatus === filterStatus;
+      filterStatus === "all" || s.fingerprintStatus === filterStatus;
     return matchesSearch && matchesFilter;
   });
 
-  const activeCount = students.filter((s) => s.rfidStatus === "active").length;
-  const inactiveCount = students.filter((s) => s.rfidStatus === "inactive").length;
+  const activeCount = students.filter((s) => s.fingerprintStatus === "active").length;
+  const inactiveCount = students.filter((s) => s.fingerprintStatus === "inactive").length;
 
   return (
     <AuthGuard allowedRoles={["admin", "teacher"]}>
@@ -58,10 +58,10 @@ export default function CardsPage() {
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-            <span>💳</span> RFID Card Manager
+            <span>👆</span> Fingerprint Manager
           </h1>
           <p className="text-slate-400 mt-1">
-            Activate, deactivate, or renew student RFID cards. Manage lost or misplaced cards.
+            Activate, deactivate, or re-enroll student fingerprints. Manage sensor access.
           </p>
         </div>
 
@@ -69,7 +69,7 @@ export default function CardsPage() {
         <div className="grid grid-cols-3 gap-4 mb-6">
           <div className="bg-slate-800 rounded-xl p-4 border border-slate-700 text-center">
             <p className="text-3xl font-bold text-blue-400">{students.length}</p>
-            <p className="text-slate-400 text-sm mt-1">Total Cards</p>
+            <p className="text-slate-400 text-sm mt-1">Total Enrolled</p>
           </div>
           <div className="bg-slate-800 rounded-xl p-4 border border-green-700/50 text-center">
             <p className="text-3xl font-bold text-green-400">{activeCount}</p>
@@ -77,7 +77,7 @@ export default function CardsPage() {
           </div>
           <div className="bg-slate-800 rounded-xl p-4 border border-red-700/50 text-center">
             <p className="text-3xl font-bold text-red-400">{inactiveCount}</p>
-            <p className="text-slate-400 text-sm mt-1">Inactive / Lost</p>
+            <p className="text-slate-400 text-sm mt-1">Inactive</p>
           </div>
         </div>
 
@@ -190,32 +190,32 @@ export default function CardsPage() {
                     <td className="px-6 py-4 text-slate-400 text-sm">Class {student.class}</td>
                     <td className="px-6 py-4">
                       <span className="font-mono text-sm text-slate-300 bg-slate-900 px-2 py-1 rounded">
-                        {student.rfidTag}
+                        {student.fingerprintId}
                       </span>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
                         <span
                           className={`w-2.5 h-2.5 rounded-full ${
-                            student.rfidStatus === "active"
+                            student.fingerprintStatus === "active"
                               ? "bg-green-400"
                               : "bg-red-400"
                           }`}
                         ></span>
                         <span
                           className={`text-sm font-medium ${
-                            student.rfidStatus === "active"
+                            student.fingerprintStatus === "active"
                               ? "text-green-400"
                               : "text-red-400"
                           }`}
                         >
-                          {student.rfidStatus === "active" ? "Active" : "Inactive"}
+                          {student.fingerprintStatus === "active" ? "Active" : "Inactive"}
                         </span>
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex gap-2">
-                        {student.rfidStatus === "active" ? (
+                        {student.fingerprintStatus === "active" ? (
                           <button
                             onClick={() =>
                               setConfirmAction({

@@ -1,20 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { students } from "@/lib/data";
 
-// GET /api/cards — List all RFID cards
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const status = searchParams.get("status");
-  const rfidTag = searchParams.get("rfidTag");
+  const fingerprintId = searchParams.get("fingerprintId");
 
   let result = [...students];
 
   if (status === "active" || status === "inactive") {
-    result = result.filter((s) => s.rfidStatus === status);
+    result = result.filter((s) => s.fingerprintStatus === status);
   }
 
-  if (rfidTag) {
-    result = result.filter((s) => s.rfidTag === rfidTag);
+  if (fingerprintId) {
+    result = result.filter((s) => s.fingerprintId === fingerprintId);
   }
 
   return NextResponse.json({
@@ -24,21 +23,20 @@ export async function GET(request: NextRequest) {
       studentId: s.studentId,
       studentName: s.name,
       class: s.class,
-      rfidTag: s.rfidTag,
-      rfidStatus: s.rfidStatus,
+      fingerprintId: s.fingerprintId,
+      fingerprintStatus: s.fingerprintStatus,
     })),
   });
 }
 
-// PATCH /api/cards — Activate or deactivate a card
 export async function PATCH(request: NextRequest) {
   try {
     const body = await request.json();
-    const { rfidTag, action } = body;
+    const { fingerprintId, action } = body;
 
-    if (!rfidTag || !action) {
+    if (!fingerprintId || !action) {
       return NextResponse.json(
-        { success: false, error: "rfidTag and action are required" },
+        { success: false, error: "fingerprintId and action are required" },
         { status: 400 }
       );
     }
@@ -50,11 +48,11 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    const studentIndex = students.findIndex((s) => s.rfidTag === rfidTag);
+    const studentIndex = students.findIndex((s) => s.fingerprintId === fingerprintId);
 
     if (studentIndex === -1) {
       return NextResponse.json(
-        { success: false, error: "RFID tag not found" },
+        { success: false, error: "Fingerprint not found" },
         { status: 404 }
       );
     }
@@ -62,17 +60,17 @@ export async function PATCH(request: NextRequest) {
     const newStatus = action === "activate" ? "active" : "inactive";
     students[studentIndex] = {
       ...students[studentIndex],
-      rfidStatus: newStatus,
+      fingerprintStatus: newStatus,
     };
 
     return NextResponse.json({
       success: true,
-      message: `Card ${action}d successfully`,
+      message: `Fingerprint ${action}d successfully`,
       card: {
         studentId: students[studentIndex].studentId,
         studentName: students[studentIndex].name,
-        rfidTag,
-        rfidStatus: newStatus,
+        fingerprintId,
+        fingerprintStatus: newStatus,
       },
     });
   } catch {
@@ -83,26 +81,24 @@ export async function PATCH(request: NextRequest) {
   }
 }
 
-// POST /api/cards — Register a new RFID card for a student
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { studentId, rfidTag } = body;
+    const { studentId, fingerprintId } = body;
 
-    if (!studentId || !rfidTag) {
+    if (!studentId || !fingerprintId) {
       return NextResponse.json(
-        { success: false, error: "studentId and rfidTag are required" },
+        { success: false, error: "studentId and fingerprintId are required" },
         { status: 400 }
       );
     }
 
-    // Check if RFID tag is already in use
-    const existingCard = students.find((s) => s.rfidTag === rfidTag);
+    const existingCard = students.find((s) => s.fingerprintId === fingerprintId);
     if (existingCard) {
       return NextResponse.json(
         {
           success: false,
-          error: `RFID tag ${rfidTag} is already assigned to ${existingCard.name}`,
+          error: `Fingerprint ${fingerprintId} is already assigned to ${existingCard.name}`,
         },
         { status: 409 }
       );
@@ -116,21 +112,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Assign new RFID tag and activate
     students[studentIndex] = {
       ...students[studentIndex],
-      rfidTag,
-      rfidStatus: "active",
+      fingerprintId,
+      fingerprintStatus: "active",
     };
 
     return NextResponse.json({
       success: true,
-      message: `New RFID card assigned to ${students[studentIndex].name}`,
+      message: `New fingerprint enrolled for ${students[studentIndex].name}`,
       card: {
         studentId,
         studentName: students[studentIndex].name,
-        rfidTag,
-        rfidStatus: "active",
+        fingerprintId,
+        fingerprintStatus: "active",
       },
     });
   } catch {

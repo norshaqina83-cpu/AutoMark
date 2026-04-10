@@ -1,10 +1,10 @@
-# Active Context: RFID Digital Attendance System
+# Active Context: Fingerprint Attendance System with Truancy Detection
 
 ## Current State
 
-**Project Status**: ✅ RFID Attendance System — Fully Built + Role-Based Auth + Advanced Features
+**Project Status**: ✅ Fingerprint Attendance System — Changed from RFID to Fingerprint Sensor + Truancy Detection
 
-A complete digital attendance management system using RFID technology (RC522 reader). The system supports teachers, parents, and administrators with role-appropriate access.
+A complete digital attendance management system using fingerprint sensor. The system supports teachers, parents, and administrators with role-appropriate access. Includes truancy detection with automatic parent notifications.
 
 ## Recently Completed
 
@@ -21,16 +21,20 @@ A complete digital attendance management system using RFID technology (RC522 rea
   - [x] Navbar updated with role-specific links + logout button
   - [x] Each page wrapped with AuthGuard + correct allowed roles
   - [x] Parents locked to their own child's data only
-- [x] **RFID Attendance System** — full implementation:
-  - [x] Dashboard (`/`) — real-time stats, recent scans, quick access portals
-  - [x] Teacher Portal (`/teacher`) — view/filter attendance, edit records, mark absent
-  - [x] RFID Card Manager (`/cards`) — activate/deactivate/renew cards
-  - [x] Parent Portal (`/parent`) — attendance history, absence reason submission
-  - [x] Student Registry (`/students`) — RFID tag ↔ student mapping, register students
-  - [x] API: `/api/attendance` (GET/POST/PATCH/PUT)
-  - [x] API: `/api/cards` (GET/POST/PATCH)
+- [x] **Fingerprint Attendance System** — migrated from RFID:
+  - [x] Changed `rfidTag` to `fingerprintId` in Student model
+  - [x] Changed `rfidStatus` to `fingerprintStatus` in Student model
+  - [x] Changed `rfidTag` to `fingerprintId` in AttendanceRecord model
+  - [x] Updated all pages: Dashboard, Teacher, Parent, Student, Cards, Students
+  - [x] API: `/api/attendance` (GET/POST/PATCH/PUT) — fingerprint-based
+  - [x] API: `/api/cards` — fingerprint management
   - [x] Shared data layer `src/lib/data.ts`
-  - [x] Navbar component with active route highlighting
+- [x] **Truancy Detection + Parent Notifications**:
+  - [x] Added `truancyNotified` field to AttendanceRecord
+  - [x] Automatic notification when student marked absent without reason
+  - [x] Truancy alert: "TRUANCY ALERT: Your child [name] was marked absent on [date] without a reason"
+  - [x] Notifications stored in localStorage and shown in parent portal
+  - [x] Parents can submit absence reason to clear truancy status
 - [x] **Advanced Attendance Features**:
   - [x] Configurable time thresholds: `lateAfter` (default 07:00) and `absentAfter` (default 12:30)
   - [x] Admin dashboard time settings panel — adjust cutoff times in-browser
@@ -55,12 +59,12 @@ A complete digital attendance management system using RFID technology (RC522 rea
   - [x] Teacher can mark rewards as received with optional notes
   - [x] Reward history tracking with received status
   - [x] Students can claim new reward after 100 more days from last claim
-- [x] **Manual RFID Entry**:
-  - [x] Students can manually type their ID if they forgot RFID card
+- [x] **Manual Fingerprint Entry**:
+  - [x] Students can manually type their ID if fingerprint not recognized
   - [x] Limited to 3 attempts per day (stored in localStorage)
   - [x] Warning displayed after exceeding 3 attempts
   - [x] ID must match logged-in student's ID to record attendance
-  - [x] **Parent Notification**: Automatic notification to parent when student uses manual entry ("Your child marked attendance using manual verification today")
+  - [x] **Parent Notification**: Automatic notification when student uses manual entry
 
 ## Current Structure
 
@@ -71,12 +75,12 @@ A complete digital attendance management system using RFID technology (RC522 rea
 | `src/app/globals.css` | Global styles | ✅ Ready |
 | `src/app/login/page.tsx` | Login with ID number input | ✅ Ready |
 | `src/app/teacher/page.tsx` | Teacher portal + notes | ✅ Ready |
-| `src/app/cards/page.tsx` | RFID card manager | ✅ Ready |
-| `src/app/parent/page.tsx` | Parent portal + absence reasons | ✅ Ready |
+| `src/app/cards/page.tsx` | Fingerprint manager | ✅ Ready |
+| `src/app/parent/page.tsx` | Parent portal + truancy notifications | ✅ Ready |
 | `src/app/students/page.tsx` | Student registry | ✅ Ready |
-| `src/app/student/page.tsx` | Student dashboard + streak tracking + reward claims + manual RFID entry | ✅ Ready |
-| `src/app/api/attendance/route.ts` | Attendance API (GET/POST/PATCH/PUT) | ✅ Ready |
-| `src/app/api/cards/route.ts` | RFID card API | ✅ Ready |
+| `src/app/student/page.tsx` | Student dashboard + streak tracking + reward claims + manual entry | ✅ Ready |
+| `src/app/api/attendance/route.ts` | Attendance API (GET/POST/PATCH/PUT) + truancy check | ✅ Ready |
+| `src/app/api/cards/route.ts` | Fingerprint API | ✅ Ready |
 | `src/components/layout/Navbar.tsx` | Navigation bar | ✅ Ready |
 | `src/components/AuthGuard.tsx` | Role-based route protection | ✅ Ready |
 | `src/lib/auth.tsx` | Auth context + ID-based login | ✅ Ready |
@@ -86,11 +90,12 @@ A complete digital attendance management system using RFID technology (RC522 rea
 ## System Features
 
 ### Hardware Integration
-- RC522 RFID reader at classroom entrance
+- Fingerprint sensor at classroom entrance
 - Green LED = successful scan
-- Red LED = card inactive or unknown
+- Red LED = fingerprint inactive or unknown
 - Buzzer = confirmation on successful scan
 - API endpoint `/api/attendance` (POST) handles scan events
+- Query param `?checkTruancy=true` checks for unexcused absences and notifies parents
 
 ### Attendance Time Rules
 | Scan Time | Status |
@@ -100,6 +105,12 @@ A complete digital attendance management system using RFID technology (RC522 rea
 | After `absentAfter` or no scan | Absent |
 
 Admin can adjust both thresholds from the dashboard.
+
+### Truancy Detection
+- When student is marked absent without a reason → truancy
+- Automatic notification sent to parent: "TRUANCY ALERT: Your child [name] was marked absent on [date] without a reason"
+- Parent can submit reason through parent portal to clear truancy
+- `truancyNotified` flag tracks if notification sent
 
 ### User Roles & Login
 Users log in with their **ID number** (e.g. `ADM001`, `TCH001`, `PAR001`) + password.
@@ -112,7 +123,7 @@ Users log in with their **ID number** (e.g. `ADM001`, `TCH001`, `PAR001`) + pass
 | Student | STU001–STU006 | View own attendance streak & claim rewards | `/student` |
 
 ### Absence Reason Workflow
-1. Student is absent → no RFID scan recorded
+1. Student is absent → no fingerprint scan recorded
 2. Parent logs in → `/parent` → clicks "Add Reason" on absent record → submits text
 3. Teacher logs in → `/teacher` → sees parent reason in blue box under absent record
 4. Teacher can add their own note (purple box) visible to both teacher and admin
@@ -130,4 +141,7 @@ Users log in with their **ID number** (e.g. `ADM001`, `TCH001`, `PAR001`) + pass
 | 2026-03-03 | Added teacher reward management panel - view pending, mark as received, track history |
 | 2026-03-03 | Students can claim new reward after 100+ days from last claim streak |
 | 2026-03-09 | Added manual RFID entry for forgotten cards - 3 attempts per day limit with warning |
-| 2026-03-09 | Added automatic parent notification when student uses manual entry - notification shown in parent portal |
+| 2026-03-09 | Added automatic parent notification when student uses manual entry |
+| 2026-04-10 | Changed from RFID to fingerprint sensor system |
+| 2026-04-10 | Added truancy detection - absent without reason = truancy |
+| 2026-04-10 | Added automatic parent notification for truancy |

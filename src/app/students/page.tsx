@@ -15,7 +15,7 @@ export default function StudentsPage() {
     name: "",
     studentId: "",
     class: "10A",
-    rfidTag: "",
+    fingerprintId: "",
     parentEmail: "",
     parentName: "",
   });
@@ -26,33 +26,33 @@ export default function StudentsPage() {
   };
 
   const handleAddStudent = () => {
-    if (!newStudent.name || !newStudent.studentId || !newStudent.rfidTag) {
+    if (!newStudent.name || !newStudent.studentId || !newStudent.fingerprintId) {
       showMessage("❌ Please fill in all required fields.");
       return;
     }
     const student: Student = {
       id: `s${Date.now()}`,
       ...newStudent,
-      rfidStatus: "active",
+      fingerprintStatus: "active",
     };
     setStudents((prev) => [...prev, student]);
     setNewStudent({
       name: "",
       studentId: "",
       class: "10A",
-      rfidTag: "",
+      fingerprintId: "",
       parentEmail: "",
       parentName: "",
     });
     setShowAddForm(false);
-    showMessage(`✅ ${student.name} has been registered with RFID tag ${student.rfidTag}.`);
+    showMessage(`✅ ${student.name} has been registered with fingerprint ${student.fingerprintId}.`);
   };
 
   const filteredStudents = students.filter((s) => {
     const matchesSearch =
       s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       s.studentId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      s.rfidTag.toLowerCase().includes(searchQuery.toLowerCase());
+      s.fingerprintId.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesClass = filterClass === "all" || s.class === filterClass;
     return matchesSearch && matchesClass;
   });
@@ -70,7 +70,7 @@ export default function StudentsPage() {
               <span>🎓</span> Student Registry
             </h1>
             <p className="text-slate-400 mt-1">
-              Manage student records and their RFID card assignments.
+              Manage student records and their fingerprint enrollments.
             </p>
           </div>
           <button
@@ -135,13 +135,13 @@ export default function StudentsPage() {
               </div>
               <div>
                 <label className="block text-slate-400 text-sm mb-1.5">
-                  RFID Tag Number <span className="text-red-400">*</span>
+                  Fingerprint ID <span className="text-red-400">*</span>
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g. RFID-X1Y2Z3"
-                  value={newStudent.rfidTag}
-                  onChange={(e) => setNewStudent({ ...newStudent, rfidTag: e.target.value })}
+                  placeholder="e.g. FP-X1Y2Z3"
+                  value={newStudent.fingerprintId}
+                  onChange={(e) => setNewStudent({ ...newStudent, fingerprintId: e.target.value })}
                   className="w-full bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 placeholder-slate-500 font-mono"
                 />
               </div>
@@ -264,22 +264,22 @@ export default function StudentsPage() {
                     <td className="px-6 py-4 text-slate-400 text-sm">Class {student.class}</td>
                     <td className="px-6 py-4">
                       <span className="font-mono text-sm text-slate-300 bg-slate-900 px-2 py-1 rounded">
-                        {student.rfidTag}
+                        {student.fingerprintId}
                       </span>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
                         <span
                           className={`w-2.5 h-2.5 rounded-full ${
-                            student.rfidStatus === "active" ? "bg-green-400" : "bg-red-400"
+                            student.fingerprintStatus === "active" ? "bg-green-400" : "bg-red-400"
                           }`}
                         ></span>
                         <span
                           className={`text-sm ${
-                            student.rfidStatus === "active" ? "text-green-400" : "text-red-400"
+                            student.fingerprintStatus === "active" ? "text-green-400" : "text-red-400"
                           }`}
                         >
-                          {student.rfidStatus === "active" ? "Active" : "Inactive"}
+                          {student.fingerprintStatus === "active" ? "Active" : "Inactive"}
                         </span>
                       </div>
                     </td>

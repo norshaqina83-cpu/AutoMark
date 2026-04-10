@@ -1,5 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
-import { attendanceRecords, attendanceSettings, students } from "@/lib/data";
+import { attendanceRecords, attendanceSettings, students, parentNotifications, ParentNotification } from "@/lib/data";
+
+function sendTruancyNotification(student: typeof students[0], record: typeof attendanceRecords[0]) {
+  const notification: ParentNotification = {
+    id: `n${Date.now()}`,
+    studentId: student.studentId,
+    studentName: student.name,
+    date: record.date,
+    message: `TRUANCY ALERT: Your child ${student.name} was marked absent on ${record.date} without a reason. Please submit an absence reason through the parent portal or contact the school.`,
+    read: false,
+    createdAt: new Date().toISOString(),
+  };
+  parentNotifications.push(notification);
+  
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem('parentNotifications');
+    const existing: ParentNotification[] = stored ? JSON.parse(stored) : [];
+    existing.push(notification);
+    localStorage.setItem('parentNotifications', JSON.stringify(existing));
+  }
+  
+  record.truancyNotified = true;
+}
 
 /** Compare two "HH:MM" time strings. Returns negative if a < b, 0 if equal, positive if a > b */
 function compareTime(a: string, b: string): number {
@@ -17,14 +39,19 @@ function determineStatus(time: string): "present" | "late" | "absent" {
   return "present";
 }
 
-// GET /api/attendance?class=10A&date=2026-02-25
+// GET /api/attendance?class=10A&date=2026-02-25&checkTruancy=true
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const classFilter = searchParams.get("class");
   const dateFilter = searchParams.get("date");
   const studentId = searchParams.get("studentId");
+  const checkTruancy = searchParams.get("checkTruancy") === "true";
 
   let records = [...attendanceRecords];
+
+  if (checkTruancy) {
+    checkTruancyAndNotify();
+  }
 
   if (classFilter) {
     records = records.filter((r) => r.class === classFilter);
@@ -44,27 +71,26 @@ export async function GET(request: NextRequest) {
   });
 }
 
-// POST /api/attendance — Record a new RFID scan
+// POST /api/attendance — Record a new fingerprint scan
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { rfidTag } = body;
+    const { fingerprintId } = body;
 
-    if (!rfidTag) {
+    if (!fingerprintId) {
       return NextResponse.json(
-        { success: false, error: "rfidTag is required" },
+        { success: false, error: "fingerprintId is required" },
         { status: 400 }
       );
     }
 
-    // Find student by RFID tag
-    const student = students.find((s) => s.rfidTag === rfidTag);
+    const student = students.find((s) => s.fingerprintId === fingerprintId);
 
     if (!student) {
       return NextResponse.json(
         {
           success: false,
-          error: "Unknown RFID tag",
+          error: "Unknown fingerprint",
           led: "red",
           buzzer: false,
         },
@@ -72,11 +98,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (student.rfidStatus === "inactive") {
+    if (student.fingerprintStatus === "inactive") {
       return NextResponse.json(
         {
           success: false,
-          error: "Card is deactivated. Please contact administration.",
+          error: "Fingerprint is deactivated. Please contact administration.",
           studentName: student.name,
           led: "red",
           buzzer: false,
@@ -87,9 +113,8 @@ export async function POST(request: NextRequest) {
 
     const now = new Date();
     const date = now.toISOString().split("T")[0];
-    const time = now.toTimeString().slice(0, 5); // "HH:MM"
+    const time = now.toTimeString().slice(0, 5);
 
-    // Check if already scanned today
     const existingRecord = attendanceRecords.find(
       (r) => r.studentId === student.studentId && r.date === date
     );
@@ -105,7 +130,6 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Determine status using configurable cutoff times
     const status = determineStatus(time);
 
     const newRecord = {
@@ -116,10 +140,14 @@ export async function POST(request: NextRequest) {
       date,
       time,
       status,
-      rfidTag,
+      fingerprintId,
     };
 
     attendanceRecords.push(newRecord);
+
+    if (status === "late" || status === "absent") {
+      sendTruancyNotification(student, newRecord);
+    }
 
     return NextResponse.json({
       success: true,
@@ -192,6 +220,13 @@ export async function PATCH(request: NextRequest) {
       ...updates,
     };
 
+    const record = attendanceRecords[recordIndex];
+    const student = students.find((s) => s.studentId === record.studentId);
+    
+    if (student && record.status === "absent" && !record.absentReason && !record.truancyNotified) {
+      sendTruancyNotification(student, record);
+    }
+
     return NextResponse.json({
       success: true,
       message: "Attendance record updated",
@@ -205,8 +240,20 @@ export async function PATCH(request: NextRequest) {
   }
 }
 
-// PATCH /api/attendance/settings — Update time thresholds (admin only)
-// This is handled via a separate settings endpoint below
+function checkTruancyAndNotify() {
+  const today = new Date().toISOString().split("T")[0];
+  
+  for (const student of students) {
+    const record = attendanceRecords.find(
+      (r) => r.studentId === student.studentId && r.date === today && r.status === "absent"
+    );
+    
+    if (record && !record.absentReason && !record.truancyNotified) {
+      sendTruancyNotification(student, record);
+    }
+  }
+}
+
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();

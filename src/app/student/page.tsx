@@ -114,8 +114,8 @@ export default function StudentDashboard() {
       class: studentInfo?.class || "",
       date: today,
       time: time,
-      status: "present", // Manual entry is considered present
-      rfidTag: "MANUAL_ENTRY",
+      status: "present",
+      fingerprintId: "MANUAL_ENTRY",
     };
 
     // Add to records (using state to avoid mutating original data)
@@ -141,12 +141,12 @@ export default function StudentDashboard() {
   const studentInfo = useMemo((): Student | null => {
     if (!user) return null;
     const students = [
-      { id: "s1", name: "Alice Johnson", studentId: "STU001", class: "10A", rfidTag: "RFID-A1B2C3", rfidStatus: "active" as const, parentEmail: "", parentName: "" },
-      { id: "s2", name: "Bob Smith", studentId: "STU002", class: "10A", rfidTag: "RFID-D4E5F6", rfidStatus: "active" as const, parentEmail: "", parentName: "" },
-      { id: "s3", name: "Carol White", studentId: "STU003", class: "10B", rfidTag: "RFID-G7H8I9", rfidStatus: "inactive" as const, parentEmail: "", parentName: "" },
-      { id: "s4", name: "David Brown", studentId: "STU004", class: "10B", rfidTag: "RFID-J1K2L3", rfidStatus: "active" as const, parentEmail: "", parentName: "" },
-      { id: "s5", name: "Emma Davis", studentId: "STU005", class: "10A", rfidTag: "RFID-M4N5O6", rfidStatus: "active" as const, parentEmail: "", parentName: "" },
-      { id: "s6", name: "Frank Wilson", studentId: "STU006", class: "10C", rfidTag: "RFID-P7Q8R9", rfidStatus: "active" as const, parentEmail: "", parentName: "" },
+      { id: "s1", name: "Alice Johnson", studentId: "STU001", class: "10A", fingerprintId: "FP-A1B2C3", fingerprintStatus: "active" as const, parentEmail: "", parentName: "" },
+      { id: "s2", name: "Bob Smith", studentId: "STU002", class: "10A", fingerprintId: "FP-D4E5F6", fingerprintStatus: "active" as const, parentEmail: "", parentName: "" },
+      { id: "s3", name: "Carol White", studentId: "STU003", class: "10B", fingerprintId: "FP-G7H8I9", fingerprintStatus: "inactive" as const, parentEmail: "", parentName: "" },
+      { id: "s4", name: "David Brown", studentId: "STU004", class: "10B", fingerprintId: "FP-J1K2L3", fingerprintStatus: "active" as const, parentEmail: "", parentName: "" },
+      { id: "s5", name: "Emma Davis", studentId: "STU005", class: "10A", fingerprintId: "FP-M4N5O6", fingerprintStatus: "active" as const, parentEmail: "", parentName: "" },
+      { id: "s6", name: "Frank Wilson", studentId: "STU006", class: "10C", fingerprintId: "FP-P7Q8R9", fingerprintStatus: "active" as const, parentEmail: "", parentName: "" },
     ];
     return students.find((s) => s.studentId === user.idNumber) || null;
   }, [user]);
