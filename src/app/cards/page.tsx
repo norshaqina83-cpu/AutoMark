@@ -94,13 +94,13 @@ export default function CardsPage() {
             <div className="bg-slate-800 border border-slate-600 rounded-xl p-6 max-w-md w-full">
               <h3 className="text-white font-semibold text-lg mb-2">
                 {confirmAction.action === "deactivate"
-                  ? "⚠️ Deactivate RFID Card?"
-                  : "✅ Reactivate RFID Card?"}
+                  ? "⚠️ Deactivate Fingerprint?"
+                  : "✅ Reactivate Fingerprint?"}
               </h3>
               <p className="text-slate-400 text-sm mb-4">
                 {confirmAction.action === "deactivate"
-                  ? "This will prevent the student from scanning in. They will need to pay a replacement fee to get a new card."
-                  : "This will allow the student to scan in again with their card."}
+                  ? "This will prevent the student from scanning in. They will need to re-enroll to use the fingerprint sensor."
+                  : "This will allow the student to scan in again with their fingerprint."}
               </p>
               <div className="flex gap-3">
                 <button
@@ -132,7 +132,7 @@ export default function CardsPage() {
             <div className="flex-1 min-w-48">
               <input
                 type="text"
-                placeholder="Search by name, student ID, or RFID tag..."
+                placeholder="Search by name, student ID, or fingerprint ID..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 placeholder-slate-500"
@@ -160,7 +160,7 @@ export default function CardsPage() {
         <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
           <div className="px-6 py-4 border-b border-slate-700">
             <h2 className="text-white font-semibold">
-              Student RFID Cards ({filteredStudents.length})
+              Student Fingerprints ({filteredStudents.length})
             </h2>
           </div>
 
@@ -171,7 +171,7 @@ export default function CardsPage() {
                   <th className="text-left px-6 py-3 text-slate-400 text-sm font-medium">Student</th>
                   <th className="text-left px-6 py-3 text-slate-400 text-sm font-medium">Student ID</th>
                   <th className="text-left px-6 py-3 text-slate-400 text-sm font-medium">Class</th>
-                  <th className="text-left px-6 py-3 text-slate-400 text-sm font-medium">RFID Tag</th>
+                  <th className="text-left px-6 py-3 text-slate-400 text-sm font-medium">Fingerprint ID</th>
                   <th className="text-left px-6 py-3 text-slate-400 text-sm font-medium">Card Status</th>
                   <th className="text-left px-6 py-3 text-slate-400 text-sm font-medium">Actions</th>
                 </tr>
@@ -253,11 +253,11 @@ export default function CardsPage() {
         <div className="mt-6 bg-amber-950/50 border border-amber-700/50 rounded-xl p-4 flex items-start gap-3">
           <span className="text-amber-400 text-xl mt-0.5">💡</span>
           <div>
-            <p className="text-amber-300 font-medium text-sm">Replacement Fee Policy</p>
+            <p className="text-amber-300 font-medium text-sm">Fingerprint Re-enrollment</p>
             <p className="text-amber-500 text-xs mt-0.5">
-              When a student loses their RFID card, deactivate it immediately to prevent misuse.
-              The student must pay the replacement fee before a new card is issued and reactivated.
-              Inactive cards will trigger the Red LED and buzzer error at the scanner.
+              When a student's fingerprint access is deactivated, they cannot scan in.
+              The student must re-enroll their fingerprint at the school administration office to regain access.
+              Inactive fingerprints will trigger the Red LED and buzzer error at the scanner.
             </p>
           </div>
         </div>

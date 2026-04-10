@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AutoMark - RFID Attendance System",
-  description: "Digital attendance management system using RFID technology",
+  title: "AutoMark - Fingerprint Attendance System",
+  description: "Digital attendance management system using fingerprint sensor technology",
 };
 
 export default function RootLayout({

@@ -189,7 +189,7 @@ export default function StudentsPage() {
             <div className="flex-1 min-w-48">
               <input
                 type="text"
-                placeholder="Search by name, student ID, or RFID tag..."
+                placeholder="Search by name, student ID, or fingerprint ID..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 placeholder-slate-500"
@@ -230,7 +230,7 @@ export default function StudentsPage() {
               Registered Students ({filteredStudents.length})
             </h2>
             <span className="text-slate-500 text-sm">
-              RFID Tag ↔ Student Mapping
+              Fingerprint ↔ Student Mapping
             </span>
           </div>
 
@@ -241,7 +241,7 @@ export default function StudentsPage() {
                   <th className="text-left px-6 py-3 text-slate-400 text-sm font-medium">Student</th>
                   <th className="text-left px-6 py-3 text-slate-400 text-sm font-medium">Student ID</th>
                   <th className="text-left px-6 py-3 text-slate-400 text-sm font-medium">Class</th>
-                  <th className="text-left px-6 py-3 text-slate-400 text-sm font-medium">RFID Tag</th>
+                  <th className="text-left px-6 py-3 text-slate-400 text-sm font-medium">Fingerprint ID</th>
                   <th className="text-left px-6 py-3 text-slate-400 text-sm font-medium">Card Status</th>
                   <th className="text-left px-6 py-3 text-slate-400 text-sm font-medium">Parent / Guardian</th>
                 </tr>
@@ -298,11 +298,11 @@ export default function StudentsPage() {
         <div className="mt-6 bg-slate-800 border border-slate-700 rounded-xl p-4 flex items-start gap-3">
           <span className="text-slate-400 text-xl mt-0.5">ℹ️</span>
           <div>
-            <p className="text-slate-300 font-medium text-sm">RFID Tag Assignment</p>
+            <p className="text-slate-300 font-medium text-sm">Fingerprint Assignment</p>
             <p className="text-slate-500 text-xs mt-0.5">
-              Each student is assigned a unique RFID tag number that links their physical card to their
-              school record. When the RC522 reader detects a card tap, it reads this tag number and
-              automatically records attendance in real time. To manage card status, visit the RFID Card Manager.
+              Each student is assigned a unique fingerprint ID that links their biometric scan to their
+              school record. When the fingerprint sensor detects a scan, it reads this ID and
+              automatically records attendance in real time. To manage fingerprint status, visit the Fingerprint Manager.
             </p>
           </div>
         </div>

@@ -55,7 +55,7 @@ function AdminDashboardContent() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-white">System Dashboard</h1>
           <p className="text-slate-400 mt-1">
-            RFID Digital Attendance Management System — Real-time overview
+            Fingerprint Digital Attendance Management System — Real-time overview
           </p>
         </div>
 
@@ -104,7 +104,7 @@ function AdminDashboardContent() {
             <span>⏱️</span> Attendance Time Settings
           </h2>
           <p className="text-slate-400 text-sm mb-5">
-            Configure the cutoff times used to classify RFID scans as Present, Late, or Absent.
+            Configure the cutoff times used to classify fingerprint scans as Present, Late, or Absent.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
@@ -191,25 +191,25 @@ function AdminDashboardContent() {
           </button>
         </div>
 
-        {/* RFID Card Status + Recent Scans */}
+        {/* Fingerprint Status + Recent Scans */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          {/* RFID Card Status */}
+          {/* Fingerprint Status */}
           <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
             <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              <span>💳</span> RFID Card Status
+              <span>👆</span> Fingerprint Status
             </h2>
             <div className="space-y-3">
               <div className="flex items-center justify-between p-3 bg-slate-900 rounded-lg">
                 <div className="flex items-center gap-3">
                   <span className="w-3 h-3 bg-green-400 rounded-full"></span>
-                  <span className="text-slate-300">Active Cards</span>
+                  <span className="text-slate-300">Active Enrolled</span>
                 </div>
                 <span className="text-green-400 font-bold text-lg">{activeCards}</span>
               </div>
               <div className="flex items-center justify-between p-3 bg-slate-900 rounded-lg">
                 <div className="flex items-center gap-3">
                   <span className="w-3 h-3 bg-red-400 rounded-full"></span>
-                  <span className="text-slate-300">Inactive / Lost</span>
+                  <span className="text-slate-300">Inactive</span>
                 </div>
                 <span className="text-red-400 font-bold text-lg">{inactiveCards}</span>
               </div>
@@ -225,14 +225,14 @@ function AdminDashboardContent() {
               href="/cards"
               className="mt-4 w-full flex items-center justify-center gap-2 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors"
             >
-              Manage RFID Cards →
+              Manage Fingerprints →
             </Link>
           </div>
 
           {/* Recent Scans */}
           <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
             <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              <span>📡</span> Recent RFID Scans
+              <span>👆</span> Recent Fingerprint Scans
             </h2>
             <div className="space-y-2">
               {recentScans.map((scan) => (
@@ -286,13 +286,13 @@ function AdminDashboardContent() {
             href="/cards"
             className="group bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-purple-500 rounded-xl p-6 transition-all"
           >
-            <div className="text-4xl mb-3">💳</div>
-            <h3 className="text-white font-semibold text-lg mb-1">RFID Card Manager</h3>
+            <div className="text-4xl mb-3">👆</div>
+            <h3 className="text-white font-semibold text-lg mb-1">Fingerprint Manager</h3>
             <p className="text-slate-400 text-sm">
-              Activate, deactivate, or renew student RFID cards. Handle lost cards.
+              Activate, deactivate, or re-enroll student fingerprints. Manage sensor access.
             </p>
             <span className="mt-3 inline-block text-purple-400 text-sm group-hover:translate-x-1 transition-transform">
-              Manage Cards →
+              Manage Fingerprints →
             </span>
           </Link>
 
@@ -313,12 +313,11 @@ function AdminDashboardContent() {
 
         {/* System Info Banner */}
         <div className="mt-6 bg-blue-950 border border-blue-800 rounded-xl p-4 flex items-start gap-3">
-          <span className="text-blue-400 text-xl mt-0.5">📡</span>
+          <span className="text-blue-400 text-xl mt-0.5">👆</span>
           <div>
-            <p className="text-blue-300 font-medium text-sm">RC522 RFID Reader — Connected</p>
+            <p className="text-blue-300 font-medium text-sm">Fingerprint Sensor — Connected</p>
             <p className="text-blue-400 text-xs mt-0.5">
-              The RFID scanner at the classroom entrance is online and transmitting attendance data in real time.
-              Green LED = successful scan &middot; Red LED = card inactive or error &middot; Buzzer = confirmation beep.
+              The fingerprint scanner at the classroom entrance is online and transmitting attendance data in real time.
             </p>
           </div>
         </div>

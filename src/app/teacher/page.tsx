@@ -175,7 +175,7 @@ export default function TeacherPage() {
             <span>👩‍🏫</span> Teacher Portal
           </h1>
           <p className="text-slate-400 mt-1">
-            View and manage class attendance. Correct RFID scan errors and add notes.
+            View and manage class attendance. Correct fingerprint scan errors and add notes.
           </p>
         </div>
 
@@ -416,7 +416,7 @@ export default function TeacherPage() {
                 <span>⚠️</span> Students Without Records ({unrecordedStudents.length})
               </h2>
               <p className="text-yellow-600 text-sm mt-0.5">
-                These students have no RFID scan for this date. Mark them as absent or add manually.
+                These students have no fingerprint scan for this date. Mark them as absent or add manually.
               </p>
             </div>
             <div className="p-4 space-y-2">
