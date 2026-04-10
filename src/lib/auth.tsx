@@ -6,79 +6,65 @@ export type UserRole = "admin" | "teacher" | "parent" | "student";
 
 export type User = {
   id: string;
-  /** The numeric ID used to log in (e.g. "ADM001", "TCH001", "PAR001") */
   idNumber: string;
   name: string;
   role: UserRole;
-  /** For parents: the studentId they are linked to */
   linkedStudentId?: string;
 };
 
-// Mock user accounts — in production these would come from a real database
-// Users log in with their idNumber + password
-export const MOCK_USERS: User[] = [
-  { id: "u1", idNumber: "ADM001", name: "Admin User", role: "admin" },
-  { id: "u2", idNumber: "TCH001", name: "Ms. Thompson", role: "teacher" },
-  { id: "u3", idNumber: "PAR001", name: "Mr. Johnson", role: "parent", linkedStudentId: "STU001" },
-  { id: "u4", idNumber: "PAR002", name: "Mrs. Smith", role: "parent", linkedStudentId: "STU002" },
-  { id: "u5", idNumber: "PAR003", name: "Mr. White", role: "parent", linkedStudentId: "STU003" },
-  { id: "u6", idNumber: "PAR004", name: "Mrs. Brown", role: "parent", linkedStudentId: "STU004" },
-  { id: "u7", idNumber: "PAR005", name: "Mr. Davis", role: "parent", linkedStudentId: "STU005" },
-  { id: "u8", idNumber: "PAR006", name: "Mrs. Wilson", role: "parent", linkedStudentId: "STU006" },
-  // Student users (students log in with their own student IDs)
-  { id: "s1", idNumber: "STU001", name: "Alice Johnson", role: "student" },
-  { id: "s2", idNumber: "STU002", name: "Bob Smith", role: "student" },
-  { id: "s3", idNumber: "STU003", name: "Carol White", role: "student" },
-  { id: "s4", idNumber: "STU004", name: "David Brown", role: "student" },
-  { id: "s5", idNumber: "STU005", name: "Emma Davis", role: "student" },
-  { id: "s6", idNumber: "STU006", name: "Frank Wilson", role: "student" },
-];
-
-// Mock passwords — in production use hashed passwords + real auth
-export const MOCK_PASSWORDS: Record<string, string> = {
-  ADM001: "admin123",
-  TCH001: "teacher123",
-  PAR001: "parent123",
-  PAR002: "parent123",
-  PAR003: "parent123",
-  PAR004: "parent123",
-  PAR005: "parent123",
-  PAR006: "parent123",
-  // Student passwords
-  STU001: "student123",
-  STU002: "student123",
-  STU003: "student123",
-  STU004: "student123",
-  STU005: "student123",
-  STU006: "student123",
+const STORAGE_KEYS = {
+  users: "automark_users",
+  passwords: "automark_passwords",
+  user: "automark_current_user",
 };
+
+function getStoredUsers(): User[] {
+  if (typeof window === "undefined") return [];
+  const stored = localStorage.getItem(STORAGE_KEYS.users);
+  return stored ? JSON.parse(stored) : [];
+}
+
+function getStoredPasswords(): Record<string, string> {
+  if (typeof window === "undefined") return {};
+  const stored = localStorage.getItem(STORAGE_KEYS.passwords);
+  return stored ? JSON.parse(stored) : {};
+}
+
+function saveUsers(users: User[]) {
+  localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(users));
+}
+
+function savePasswords(passwords: Record<string, string>) {
+  localStorage.setItem(STORAGE_KEYS.passwords, JSON.stringify(passwords));
+}
 
 type AuthContextType = {
   user: User | null;
+  users: User[];
   login: (idNumber: string, password: string) => { success: boolean; error?: string };
   logout: () => void;
+  register: (data: { idNumber: string; password: string; name: string; role: UserRole; linkedStudentId?: string }) => { success: boolean; error?: string };
   isLoading: boolean;
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-const STORAGE_KEY = "rfid_auth_user";
-
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        const parsed = JSON.parse(stored) as User;
-        // Validate the stored user still exists in mock users
-        const valid = MOCK_USERS.find((u) => u.id === parsed.id);
+      const storedUser = localStorage.getItem(STORAGE_KEYS.user);
+      if (storedUser) {
+        const parsed = JSON.parse(storedUser) as User;
+        const storedUsers = getStoredUsers();
+        const valid = storedUsers.find((u) => u.id === parsed.id);
         if (valid) setUser(valid);
       }
+      setUsers(getStoredUsers());
     } catch {
-      // ignore parse errors
     } finally {
       setIsLoading(false);
     }
@@ -87,12 +73,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = useCallback(
     (idNumber: string, password: string): { success: boolean; error?: string } => {
       const normalised = idNumber.trim().toUpperCase();
-      const found = MOCK_USERS.find((u) => u.idNumber === normalised);
+      const storedUsers = getStoredUsers();
+      const storedPasswords = getStoredPasswords();
+      const found = storedUsers.find((u) => u.idNumber === normalised);
       if (!found) return { success: false, error: "ID number not found. Please check and try again." };
-      if (MOCK_PASSWORDS[normalised] !== password)
+      if (storedPasswords[normalised] !== password)
         return { success: false, error: "Incorrect password." };
       setUser(found);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(found));
+      localStorage.setItem(STORAGE_KEYS.user, JSON.stringify(found));
       return { success: true };
     },
     []
@@ -100,11 +88,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = useCallback(() => {
     setUser(null);
-    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(STORAGE_KEYS.user);
   }, []);
 
+  const register = useCallback(
+    (data: { idNumber: string; password: string; name: string; role: UserRole; linkedStudentId?: string }): { success: boolean; error?: string } => {
+      const normalisedId = data.idNumber.trim().toUpperCase();
+      const storedUsers = getStoredUsers();
+      const storedPasswords = getStoredPasswords();
+
+      if (storedUsers.some((u) => u.idNumber === normalisedId)) {
+        return { success: false, error: "This ID number is already registered." };
+      }
+
+      const newUser: User = {
+        id: `u${Date.now()}`,
+        idNumber: normalisedId,
+        name: data.name.trim(),
+        role: data.role,
+        linkedStudentId: data.linkedStudentId,
+      };
+
+      storedUsers.push(newUser);
+      storedPasswords[normalisedId] = data.password;
+
+      saveUsers(storedUsers);
+      savePasswords(storedPasswords);
+      setUsers(storedUsers);
+
+      return { success: true };
+    },
+    []
+  );
+
   return (
-    <AuthContext.Provider value={{ user, login, logout, isLoading }}>
+    <AuthContext.Provider value={{ user, users, login, logout, register, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

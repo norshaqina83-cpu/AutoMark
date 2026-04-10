@@ -1,12 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
 import AuthGuard from "@/components/AuthGuard";
-import { students, attendanceRecords, attendanceSettings } from "@/lib/data";
+import { getStoredStudents, getStoredAttendance, getStoredSettings, saveSettings, AttendanceSettings } from "@/lib/data";
 
 function AdminDashboardContent() {
+  const [students, setStudents] = useState<ReturnType<typeof getStoredStudents>>([]);
+  const [attendanceRecords, setAttendanceRecords] = useState<ReturnType<typeof getStoredAttendance>>([]);
+  const [settings, setSettings] = useState<AttendanceSettings>({ lateAfter: "07:00", absentAfter: "12:30" });
+
+  useEffect(() => {
+    setStudents(getStoredStudents());
+    setAttendanceRecords(getStoredAttendance());
+    const storedSettings = getStoredSettings();
+    if (storedSettings) setSettings(storedSettings);
+  }, []);
+
   const today = new Date().toISOString().split("T")[0];
   const todayRecords = attendanceRecords.filter((r) => r.date === today);
   const presentToday = todayRecords.filter((r) => r.status === "present").length;
@@ -24,24 +35,22 @@ function AdminDashboardContent() {
     })
     .slice(0, 5);
 
-  // Time settings state
-  const [lateAfter, setLateAfter] = useState(attendanceSettings.lateAfter);
-  const [absentAfter, setAbsentAfter] = useState(attendanceSettings.absentAfter);
+  const [lateAfter, setLateAfter] = useState(settings.lateAfter);
+  const [absentAfter, setAbsentAfter] = useState(settings.absentAfter);
   const [settingsSaved, setSettingsSaved] = useState(false);
   const [settingsError, setSettingsError] = useState("");
 
   const handleSaveSettings = () => {
     setSettingsError("");
-    // Validate: lateAfter must be before absentAfter
     const [lh, lm] = lateAfter.split(":").map(Number);
     const [ah, am] = absentAfter.split(":").map(Number);
     if (lh * 60 + lm >= ah * 60 + am) {
       setSettingsError("'Late after' time must be earlier than 'Absent after' time.");
       return;
     }
-    // Apply to the shared settings object (in-memory)
-    attendanceSettings.lateAfter = lateAfter;
-    attendanceSettings.absentAfter = absentAfter;
+    const newSettings = { lateAfter, absentAfter };
+    saveSettings(newSettings);
+    setSettings(newSettings);
     setSettingsSaved(true);
     setTimeout(() => setSettingsSaved(false), 3000);
   };
@@ -76,7 +85,7 @@ function AdminDashboardContent() {
               <span className="text-2xl">⏰</span>
             </div>
             <p className="text-3xl font-bold text-yellow-400">{lateToday}</p>
-            <p className="text-slate-500 text-xs mt-1">arrived after {attendanceSettings.lateAfter}</p>
+            <p className="text-slate-500 text-xs mt-1">arrived after {settings.lateAfter}</p>
           </div>
 
           <div className="bg-slate-800 rounded-xl p-5 border border-slate-700">
@@ -124,7 +133,7 @@ function AdminDashboardContent() {
                 className="w-full bg-slate-800 border border-slate-600 text-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-yellow-500 transition-colors"
               />
               <p className="text-slate-500 text-xs mt-2">
-                Current: <span className="text-yellow-400 font-mono">{attendanceSettings.lateAfter}</span>
+                Current: <span className="text-yellow-400 font-mono">{settings.lateAfter}</span>
               </p>
             </div>
 
@@ -144,7 +153,7 @@ function AdminDashboardContent() {
                 className="w-full bg-slate-800 border border-slate-600 text-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-red-500 transition-colors"
               />
               <p className="text-slate-500 text-xs mt-2">
-                Current: <span className="text-red-400 font-mono">{attendanceSettings.absentAfter}</span>
+                Current: <span className="text-red-400 font-mono">{settings.absentAfter}</span>
               </p>
             </div>
           </div>
