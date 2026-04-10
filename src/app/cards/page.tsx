@@ -172,7 +172,7 @@ export default function CardsPage() {
                   <th className="text-left px-6 py-3 text-slate-400 text-sm font-medium">Student ID</th>
                   <th className="text-left px-6 py-3 text-slate-400 text-sm font-medium">Class</th>
                   <th className="text-left px-6 py-3 text-slate-400 text-sm font-medium">Fingerprint ID</th>
-                  <th className="text-left px-6 py-3 text-slate-400 text-sm font-medium">Card Status</th>
+                  <th className="text-left px-6 py-3 text-slate-400 text-sm font-medium">Fingerprint Status</th>
                   <th className="text-left px-6 py-3 text-slate-400 text-sm font-medium">Actions</th>
                 </tr>
               </thead>

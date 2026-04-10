@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { useAuth } from "@/lib/auth";
-import { attendanceRecords, Student, RewardClaim, rewardClaims, AttendanceRecord, parentNotifications, ParentNotification } from "@/lib/data";
+import { attendanceRecords, Student, RewardClaim, rewardClaims, AttendanceRecord } from "@/lib/data";
 import AuthGuard from "@/components/AuthGuard";
 
 export default function StudentDashboard() {
@@ -11,15 +11,8 @@ export default function StudentDashboard() {
   const [claimedReward, setClaimedReward] = useState(false);
   const [rewardsList, setRewardsList] = useState<RewardClaim[]>([...rewardClaims]);
   
-  // Use state for attendance records to allow manual entry
+  // Use state for attendance records
   const [studentAttendanceRecords, setStudentAttendanceRecords] = useState<AttendanceRecord[]>([]);
-  
-  // Use state for notifications (stored in localStorage)
-  const [notificationsList, setNotificationsList] = useState<ParentNotification[]>(() => {
-    if (typeof window === 'undefined') return [];
-const stored = localStorage.getItem('parentNotifications');
-    return stored ? JSON.parse(stored) : [];
-  });
 
   // Get student's attendance records
   // eslint-disable-next-line react-hooks/preserve-manual-memoization
