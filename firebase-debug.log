@@ -244,3 +244,4 @@ Issues? Report them at https://github.com/firebase/firebase-tools/issues and att
 [info] i  emulators: Received export request. Exporting data to ./exportedData. 
 [debug] [2026-04-11T11:32:07.023Z] hubExport: swapping firebase-export-1775907122412dH5sw1 with ./exportedData
 [info] ✔  emulators: Export complete. 
+[info] i  emulators: Clearing data from Data Connect data sources. 

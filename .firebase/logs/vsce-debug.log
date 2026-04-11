@@ -138,3 +138,10 @@ I0411 09:28:11.804751   14475 dev.go:104] Listening on address (HTTP + gRPC): 12
 [debug] [2026-04-11T11:32:02.306Z] >>> [apiv2][body] POST http://127.0.0.1:4400/_admin/export {"path":"./exportedData","initiatedBy":"Data Connect VSCode extension"}
 [debug] [2026-04-11T11:32:07.035Z] <<< [apiv2][status] POST http://127.0.0.1:4400/_admin/export 200
 [debug] [2026-04-11T11:32:07.036Z] <<< [apiv2][body] POST http://127.0.0.1:4400/_admin/export {"message":"OK"}
+[debug] [2026-04-11T11:37:29.529Z] Found emulator hub locator: {"version":"15.14.0","origins":["http://127.0.0.1:4400","http://[::1]:4400"],"pid":62166}
+[debug] [2026-04-11T11:37:29.530Z] >>> [apiv2][query] GET http://127.0.0.1:4400/ [none]
+[debug] [2026-04-11T11:37:29.626Z] <<< [apiv2][status] GET http://127.0.0.1:4400/ 200
+[debug] [2026-04-11T11:37:29.627Z] <<< [apiv2][body] GET http://127.0.0.1:4400/ {"version":"15.14.0","origins":["http://127.0.0.1:4400","http://[::1]:4400"],"pid":62166,"host":"127.0.0.1","port":4400}
+[debug] [2026-04-11T11:37:29.627Z] >>> [apiv2][query] POST http://127.0.0.1:4400/dataconnect/clearData [none]
+[debug] [2026-04-11T11:37:29.728Z] <<< [apiv2][status] POST http://127.0.0.1:4400/dataconnect/clearData 200
+[debug] [2026-04-11T11:37:29.728Z] <<< [apiv2][body] POST http://127.0.0.1:4400/dataconnect/clearData {"success":true}
