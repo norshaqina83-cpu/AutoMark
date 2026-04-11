@@ -239,3 +239,5 @@ Issues? Report them at https://github.com/firebase/firebase-tools/issues and att
  
 [debug] [2026-04-11T11:19:51.203Z] Postgres client disconnected
 [debug] [2026-04-11T11:22:11.107Z] Postgres client disconnected
+[debug] [2026-04-11T11:29:19.476Z] Postgres client disconnected
+[debug] [2026-04-11T11:30:22.121Z] Postgres client disconnected
