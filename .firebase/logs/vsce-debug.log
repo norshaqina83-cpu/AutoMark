@@ -123,3 +123,10 @@ I0411 09:28:11.804751   14475 dev.go:104] Listening on address (HTTP + gRPC): 12
 [info] ✔  Wrote .gemini/extensions/firebase/gemini-extension.json 
 [info] ✔  Wrote .gemini/extensions/firebase/contexts/FIREBASE-BASE.md 
 [info] ✔  Wrote .gemini/extensions/firebase/FIREBASE.md 
+[debug] [2026-04-11T11:18:40.577Z] [Firebase Plugin] Received emulators started notification. Running detection.
+[debug] [2026-04-11T11:18:40.578Z] Found emulator hub locator: {"version":"15.14.0","origins":["http://127.0.0.1:4400","http://[::1]:4400"],"pid":62166}
+[debug] [2026-04-11T11:18:40.580Z] >>> [apiv2][query] GET http://127.0.0.1:4400/emulators [none]
+[debug] [2026-04-11T11:18:41.349Z] <<< [apiv2][status] GET http://127.0.0.1:4400/emulators 200
+[debug] [2026-04-11T11:18:41.349Z] <<< [apiv2][body] GET http://127.0.0.1:4400/emulators {"hub":{"listen":[{"address":"127.0.0.1","family":"IPv4","port":4400},{"address":"::1","family":"IPv6","port":4400}],"name":"hub","host":"127.0.0.1","port":4400},"logging":{"listen":[{"address":"127.0.0.1","family":"IPv4","port":4500}],"name":"logging","host":"127.0.0.1","port":4500},"apphosting":{"listen":[{"address":"127.0.0.1","family":"IPv4","port":5002}],"name":"apphosting","host":"localhost","port":5002},"dataconnect":{"listen":[{"address":"127.0.0.1","family":"IPv4","port":9399},{"address":"::1","family":"IPv6","port":9399}],"name":"dataconnect","host":"127.0.0.1","port":9399,"pid":62304,"timeout":10000}}
+[debug] [2026-04-11T11:18:45.382Z] I0411 11:18:45.375301   14475 engine.go:209] [projects/emulator/locations/emulator/services/automark-b3277-service cba8] ExecuteGraphqlRead query IntrospectionQuery: succeeded. 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0411 11:18:45.375301   14475 engine.go:209] [projects/emulator/locations/emulator/services/automark-b3277-service cba8] ExecuteGraphqlRead query IntrospectionQuery: succeeded. \n"}}

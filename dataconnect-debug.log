@@ -1,0 +1,41 @@
+I0411 11:18:28.063329   62304 load.go:31] Reloading schema and connectors...
+I0411 11:18:28.105640   62304 control.go:100] [projects/emulator/locations/emulator/services/automark-b3277-service 245a] UpdateResources(): done
+Main schema: sources: schema/schema.gql [1261B] 
+Connector "example": sources: 
+E0411 11:18:28.126978   62304 load.go:95] Errors generating SDK: [connector "example"]: invalid Data Connect Connector no query found in connector
+I0411 11:18:28.139862   62304 collector.go:107] schema extensions wrote into "/workspaces/AutoMark/dataconnect/.dataconnect/schema"
+Generated sources: prelude.gql [82799B] main/input.gql [86027B] main/relation.gql [42286B] main/query.gql [10401B] main/mutation.gql [28275B] main/implicit.gql [5118B] 
+I0411 11:18:28.139924   62304 load.go:109] Finished reloading
+I0411 11:18:28.140192   62304 dev.go:104] Listening on address (HTTP + gRPC): 127.0.0.1:9399
+I0411 11:18:28.140280   62304 dev.go:104] Listening on address (HTTP + gRPC): [::1]:9399
+I0411 11:18:35.026419   62304 migrate.go:24] Running migration SQL:
+Step 1: CREATE EXTENSION IF NOT EXISTS "uuid-ossp"
+Step 2: CREATE TABLE "public"."user" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "created_at" timestamptz NOT NULL, "email" text NULL, "fingerprint_id" text NULL, "first_name" text NULL, "last_name" text NULL, "parent_email" text NULL, "parent_name" text NULL, "password_hash" text NOT NULL, "role" text NOT NULL, "username" text NOT NULL, PRIMARY KEY ("id"))
+Step 3: CREATE TABLE "public"."class" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "teacher_id" uuid NULL, "code" text NOT NULL, "created_at" timestamptz NOT NULL, "description" text NULL, "name" text NOT NULL, PRIMARY KEY ("id"), CONSTRAINT "class_teacher_id_fkey" FOREIGN KEY ("teacher_id") REFERENCES "public"."user" ("id") ON DELETE SET NULL)
+Step 4: CREATE INDEX "class_teacherId_idx" ON "public"."class" ("teacher_id")
+Step 5: CREATE TABLE "public"."session" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "class_id" uuid NOT NULL, "created_at" timestamptz NOT NULL, "end_time" text NOT NULL, "session_date" date NOT NULL, "start_time" text NOT NULL, PRIMARY KEY ("id"), CONSTRAINT "session_class_id_fkey" FOREIGN KEY ("class_id") REFERENCES "public"."class" ("id") ON DELETE CASCADE)
+Step 6: CREATE INDEX "session_classId_idx" ON "public"."session" ("class_id")
+Step 7: CREATE TABLE "public"."attendance" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "corrected_by_id" uuid NULL, "session_id" uuid NOT NULL, "student_id" uuid NOT NULL, "absent_reason" text NULL, "created_at" timestamptz NOT NULL, "marked_at" timestamptz NOT NULL, "marked_by" text NULL, "status" text NOT NULL, "teacher_note" text NULL, "truancy_notified" boolean NULL, PRIMARY KEY ("id"), CONSTRAINT "attendance_corrected_by_id_fkey" FOREIGN KEY ("corrected_by_id") REFERENCES "public"."user" ("id") ON DELETE SET NULL, CONSTRAINT "attendance_session_id_fkey" FOREIGN KEY ("session_id") REFERENCES "public"."session" ("id") ON DELETE CASCADE, CONSTRAINT "attendance_student_id_fkey" FOREIGN KEY ("student_id") REFERENCES "public"."user" ("id") ON DELETE CASCADE)
+Step 8: CREATE INDEX "attendance_correctedById_idx" ON "public"."attendance" ("corrected_by_id")
+Step 9: CREATE INDEX "attendance_sessionId_idx" ON "public"."attendance" ("session_id")
+Step 10: CREATE INDEX "attendance_studentId_idx" ON "public"."attendance" ("student_id")
+Step 11: CREATE TABLE "public"."attendance_setting" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "class_id" uuid NULL, "teacher_id" uuid NULL, "absent_after" text NOT NULL, "created_at" timestamptz NOT NULL, "late_after" text NOT NULL, PRIMARY KEY ("id"), CONSTRAINT "attendance_setting_class_id_fkey" FOREIGN KEY ("class_id") REFERENCES "public"."class" ("id") ON DELETE SET NULL, CONSTRAINT "attendance_setting_teacher_id_fkey" FOREIGN KEY ("teacher_id") REFERENCES "public"."user" ("id") ON DELETE SET NULL)
+Step 12: CREATE INDEX "attendance_setting_classId_idx" ON "public"."attendance_setting" ("class_id")
+Step 13: CREATE INDEX "attendance_setting_teacherId_idx" ON "public"."attendance_setting" ("teacher_id")
+Step 14: CREATE TABLE "public"."enrollment" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "class_id" uuid NOT NULL, "student_id" uuid NOT NULL, "created_at" timestamptz NOT NULL, "enrollment_date" date NOT NULL, PRIMARY KEY ("id"), CONSTRAINT "enrollment_class_id_fkey" FOREIGN KEY ("class_id") REFERENCES "public"."class" ("id") ON DELETE CASCADE, CONSTRAINT "enrollment_student_id_fkey" FOREIGN KEY ("student_id") REFERENCES "public"."user" ("id") ON DELETE CASCADE)
+Step 15: CREATE INDEX "enrollment_classId_idx" ON "public"."enrollment" ("class_id")
+Step 16: CREATE INDEX "enrollment_studentId_idx" ON "public"."enrollment" ("student_id")
+Step 17: CREATE TABLE "public"."parent_notification" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "sender_id" uuid NULL, "student_id" uuid NOT NULL, "created_at" timestamptz NOT NULL, "date" date NOT NULL, "message" text NOT NULL, "read" boolean NOT NULL, PRIMARY KEY ("id"), CONSTRAINT "parent_notification_sender_id_fkey" FOREIGN KEY ("sender_id") REFERENCES "public"."user" ("id") ON DELETE SET NULL, CONSTRAINT "parent_notification_student_id_fkey" FOREIGN KEY ("student_id") REFERENCES "public"."user" ("id") ON DELETE CASCADE)
+Step 18: CREATE INDEX "parent_notification_senderId_idx" ON "public"."parent_notification" ("sender_id")
+Step 19: CREATE INDEX "parent_notification_studentId_idx" ON "public"."parent_notification" ("student_id")
+Step 20: CREATE TABLE "public"."reward_claim" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "student_id" uuid NOT NULL, "claimed_at" timestamptz NOT NULL, "received_at" timestamptz NULL, "reward_received" boolean NOT NULL, "streak_at_claim" integer NOT NULL, "teacher_note" text NULL, PRIMARY KEY ("id"), CONSTRAINT "reward_claim_student_id_fkey" FOREIGN KEY ("student_id") REFERENCES "public"."user" ("id") ON DELETE CASCADE)
+Step 21: CREATE INDEX "reward_claim_studentId_idx" ON "public"."reward_claim" ("student_id")
+I0411 11:18:36.679533   62304 control.go:100] [projects/emulator/locations/emulator/services/automark-b3277-service 378e] UpdateResources(): done
+Main schema: sources: schema/schema.gql [1261B] 
+Connector "example": sources: 
+I0411 11:18:36.688164   62304 configure_emulator.go:21] ConfigureEmulator successed
+Request: service_id: "automark-b3277-service"
+connection_string: "postgres://127.0.0.1:5432/automark-b3277-database?sslmode=disable"
+database: "automark-b3277-database"
+
+Response: 
