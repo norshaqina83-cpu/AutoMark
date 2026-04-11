@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "@/components/layout/Navbar";
 import AuthGuard from "@/components/AuthGuard";
-import { students as initialStudents, Student, classes } from "@/lib/data";
+import { getStoredStudents, saveStudents, Student, classes } from "@/lib/data";
 
 export default function StudentsPage() {
-  const [students, setStudents] = useState<Student[]>([...initialStudents]);
+  const [students, setStudents] = useState<Student[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterClass, setFilterClass] = useState("all");
   const [showAddForm, setShowAddForm] = useState(false);
@@ -15,10 +15,14 @@ export default function StudentsPage() {
     name: "",
     studentId: "",
     class: "10A",
-    rfidTag: "",
+    fingerprintId: "",
     parentEmail: "",
     parentName: "",
   });
+
+  useEffect(() => {
+    setStudents(getStoredStudents());
+  }, []);
 
   const showMessage = (msg: string) => {
     setSaveMessage(msg);
@@ -26,33 +30,35 @@ export default function StudentsPage() {
   };
 
   const handleAddStudent = () => {
-    if (!newStudent.name || !newStudent.studentId || !newStudent.rfidTag) {
+    if (!newStudent.name || !newStudent.studentId || !newStudent.fingerprintId) {
       showMessage("❌ Please fill in all required fields.");
       return;
     }
     const student: Student = {
       id: `s${Date.now()}`,
       ...newStudent,
-      rfidStatus: "active",
+      fingerprintStatus: "active",
     };
-    setStudents((prev) => [...prev, student]);
+    const updated = [...students, student];
+    setStudents(updated);
+    saveStudents(updated);
     setNewStudent({
       name: "",
       studentId: "",
       class: "10A",
-      rfidTag: "",
+      fingerprintId: "",
       parentEmail: "",
       parentName: "",
     });
     setShowAddForm(false);
-    showMessage(`✅ ${student.name} has been registered with RFID tag ${student.rfidTag}.`);
+    showMessage(`✅ ${student.name} has been registered with fingerprint ${student.fingerprintId}.`);
   };
 
   const filteredStudents = students.filter((s) => {
     const matchesSearch =
       s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       s.studentId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      s.rfidTag.toLowerCase().includes(searchQuery.toLowerCase());
+      s.fingerprintId.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesClass = filterClass === "all" || s.class === filterClass;
     return matchesSearch && matchesClass;
   });
@@ -63,14 +69,13 @@ export default function StudentsPage() {
       <Navbar />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
         <div className="flex items-start justify-between mb-6 flex-wrap gap-4">
           <div>
             <h1 className="text-3xl font-bold text-white flex items-center gap-3">
               <span>🎓</span> Student Registry
             </h1>
             <p className="text-slate-400 mt-1">
-              Manage student records and their RFID card assignments.
+              Manage student records and their fingerprint enrollments.
             </p>
           </div>
           <button
@@ -81,67 +86,55 @@ export default function StudentsPage() {
           </button>
         </div>
 
-        {/* Save Message */}
         {saveMessage && (
           <div className="mb-4 p-3 bg-slate-800 border border-slate-600 rounded-lg text-slate-200 text-sm">
             {saveMessage}
           </div>
         )}
 
-        {/* Add Student Form */}
         {showAddForm && (
-          <div className="bg-slate-800 rounded-xl border border-blue-700/50 p-6 mb-6">
-            <h2 className="text-white font-semibold text-lg mb-4 flex items-center gap-2">
-              <span>➕</span> Register New Student
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="mb-6 bg-slate-800 border border-slate-700 rounded-xl p-6">
+            <h2 className="text-lg font-semibold text-white mb-4">Register New Student</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div>
-                <label className="block text-slate-400 text-sm mb-1.5">
-                  Full Name <span className="text-red-400">*</span>
-                </label>
+                <label className="block text-slate-400 text-sm mb-1.5">Full Name <span className="text-red-400">*</span></label>
                 <input
                   type="text"
-                  placeholder="e.g. John Doe"
                   value={newStudent.name}
                   onChange={(e) => setNewStudent({ ...newStudent, name: e.target.value })}
-                  className="w-full bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 placeholder-slate-500"
+                  placeholder="e.g. John Doe"
+                  className="w-full bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500"
                 />
               </div>
               <div>
-                <label className="block text-slate-400 text-sm mb-1.5">
-                  Student ID <span className="text-red-400">*</span>
-                </label>
+                <label className="block text-slate-400 text-sm mb-1.5">Student ID <span className="text-red-400">*</span></label>
                 <input
                   type="text"
-                  placeholder="e.g. STU007"
                   value={newStudent.studentId}
-                  onChange={(e) => setNewStudent({ ...newStudent, studentId: e.target.value })}
-                  className="w-full bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 placeholder-slate-500"
+                  onChange={(e) => setNewStudent({ ...newStudent, studentId: e.target.value.toUpperCase() })}
+                  placeholder="e.g. STU001"
+                  className="w-full bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 font-mono"
                 />
               </div>
               <div>
-                <label className="block text-slate-400 text-sm mb-1.5">Class</label>
+                <label className="block text-slate-400 text-sm mb-1.5">Class <span className="text-red-400">*</span></label>
                 <select
                   value={newStudent.class}
                   onChange={(e) => setNewStudent({ ...newStudent, class: e.target.value })}
                   className="w-full bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500"
                 >
                   {classes.map((c) => (
-                    <option key={c} value={c}>
-                      Class {c}
-                    </option>
+                    <option key={c} value={c}>{c}</option>
                   ))}
                 </select>
               </div>
               <div>
-                <label className="block text-slate-400 text-sm mb-1.5">
-                  RFID Tag Number <span className="text-red-400">*</span>
-                </label>
+                <label className="block text-slate-400 text-sm mb-1.5">Fingerprint ID <span className="text-red-400">*</span></label>
                 <input
                   type="text"
-                  placeholder="e.g. RFID-X1Y2Z3"
-                  value={newStudent.rfidTag}
-                  onChange={(e) => setNewStudent({ ...newStudent, rfidTag: e.target.value })}
+                  value={newStudent.fingerprintId}
+                  onChange={(e) => setNewStudent({ ...newStudent, fingerprintId: e.target.value.toUpperCase() })}
+                  placeholder="e.g. FP-X1Y2Z3"
                   className="w-full bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 placeholder-slate-500 font-mono"
                 />
               </div>
@@ -149,33 +142,33 @@ export default function StudentsPage() {
                 <label className="block text-slate-400 text-sm mb-1.5">Parent / Guardian Name</label>
                 <input
                   type="text"
-                  placeholder="e.g. Mr. Doe"
                   value={newStudent.parentName}
                   onChange={(e) => setNewStudent({ ...newStudent, parentName: e.target.value })}
-                  className="w-full bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 placeholder-slate-500"
+                  placeholder="e.g. Mr. Doe"
+                  className="w-full bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500"
                 />
               </div>
               <div>
                 <label className="block text-slate-400 text-sm mb-1.5">Parent Email</label>
                 <input
                   type="email"
-                  placeholder="e.g. parent@email.com"
                   value={newStudent.parentEmail}
                   onChange={(e) => setNewStudent({ ...newStudent, parentEmail: e.target.value })}
-                  className="w-full bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 placeholder-slate-500"
+                  placeholder="e.g. parent@email.com"
+                  className="w-full bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500"
                 />
               </div>
             </div>
-            <div className="flex gap-3 mt-5">
+            <div className="flex gap-3 mt-4">
               <button
                 onClick={handleAddStudent}
-                className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors"
+                className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium"
               >
-                Register Student
+                Add Student
               </button>
               <button
                 onClick={() => setShowAddForm(false)}
-                className="px-5 py-2.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm font-medium transition-colors"
+                className="px-5 py-2.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm font-medium"
               >
                 Cancel
               </button>
@@ -183,126 +176,87 @@ export default function StudentsPage() {
           </div>
         )}
 
-        {/* Search & Filter */}
-        <div className="bg-slate-800 rounded-xl p-5 border border-slate-700 mb-6">
-          <div className="flex flex-wrap gap-4">
-            <div className="flex-1 min-w-48">
-              <input
-                type="text"
-                placeholder="Search by name, student ID, or RFID tag..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 placeholder-slate-500"
-              />
-            </div>
-            <div className="flex gap-2">
-              <button
-                onClick={() => setFilterClass("all")}
-                className={`px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                  filterClass === "all"
-                    ? "bg-blue-600 text-white"
-                    : "bg-slate-900 text-slate-400 hover:bg-slate-700"
-                }`}
-              >
-                All Classes
-              </button>
+        <div className="bg-slate-800 rounded-xl border border-slate-700 mb-6">
+          <div className="p-4 border-b border-slate-700 flex flex-wrap gap-4">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search by name, student ID, or fingerprint ID..."
+              className="flex-1 min-w-[200px] bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-blue-500"
+            />
+            <select
+              value={filterClass}
+              onChange={(e) => setFilterClass(e.target.value)}
+              className="bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-blue-500"
+            >
+              <option value="all">All Classes</option>
               {classes.map((c) => (
-                <button
-                  key={c}
-                  onClick={() => setFilterClass(c)}
-                  className={`px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                    filterClass === c
-                      ? "bg-blue-600 text-white"
-                      : "bg-slate-900 text-slate-400 hover:bg-slate-700"
-                  }`}
-                >
-                  {c}
-                </button>
+                <option key={c} value={c}>{c}</option>
               ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Students Table */}
-        <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-700 flex items-center justify-between">
-            <h2 className="text-white font-semibold">
-              Registered Students ({filteredStudents.length})
-            </h2>
-            <span className="text-slate-500 text-sm">
-              RFID Tag ↔ Student Mapping
-            </span>
+            </select>
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-slate-700 bg-slate-900/50">
+                <tr className="border-b border-slate-700">
                   <th className="text-left px-6 py-3 text-slate-400 text-sm font-medium">Student</th>
                   <th className="text-left px-6 py-3 text-slate-400 text-sm font-medium">Student ID</th>
                   <th className="text-left px-6 py-3 text-slate-400 text-sm font-medium">Class</th>
-                  <th className="text-left px-6 py-3 text-slate-400 text-sm font-medium">RFID Tag</th>
-                  <th className="text-left px-6 py-3 text-slate-400 text-sm font-medium">Card Status</th>
-                  <th className="text-left px-6 py-3 text-slate-400 text-sm font-medium">Parent / Guardian</th>
+                  <th className="text-left px-6 py-3 text-slate-400 text-sm font-medium">Fingerprint ID</th>
+                  <th className="text-left px-6 py-3 text-slate-400 text-sm font-medium">Fingerprint Status</th>
+                  <th className="text-left px-6 py-3 text-slate-400 text-sm font-medium">Parent Info</th>
                 </tr>
               </thead>
               <tbody>
-                {filteredStudents.map((student) => (
-                  <tr
-                    key={student.id}
-                    className="border-b border-slate-700/50 hover:bg-slate-700/30 transition-colors"
-                  >
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-blue-700 rounded-full flex items-center justify-center text-white text-sm font-bold">
-                          {student.name.charAt(0)}
-                        </div>
-                        <p className="text-white font-medium">{student.name}</p>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-slate-400 text-sm">{student.studentId}</td>
-                    <td className="px-6 py-4 text-slate-400 text-sm">Class {student.class}</td>
-                    <td className="px-6 py-4">
-                      <span className="font-mono text-sm text-slate-300 bg-slate-900 px-2 py-1 rounded">
-                        {student.rfidTag}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <span
-                          className={`w-2.5 h-2.5 rounded-full ${
-                            student.rfidStatus === "active" ? "bg-green-400" : "bg-red-400"
-                          }`}
-                        ></span>
-                        <span
-                          className={`text-sm ${
-                            student.rfidStatus === "active" ? "text-green-400" : "text-red-400"
-                          }`}
-                        >
-                          {student.rfidStatus === "active" ? "Active" : "Inactive"}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <p className="text-slate-300 text-sm">{student.parentName || "—"}</p>
-                      <p className="text-slate-500 text-xs">{student.parentEmail || "—"}</p>
+                {filteredStudents.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-6 py-12 text-center text-slate-500">
+                      {students.length === 0 ? "No students registered yet. Click 'Register New Student' to add one." : "No students match your search."}
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  filteredStudents.map((student) => (
+                    <tr key={student.id} className="border-b border-slate-700/50 hover:bg-slate-700/30">
+                      <td className="px-6 py-4">
+                        <p className="text-white font-medium">{student.name}</p>
+                      </td>
+                      <td className="px-6 py-4 text-slate-400 text-sm">{student.studentId}</td>
+                      <td className="px-6 py-4 text-slate-400 text-sm">Class {student.class}</td>
+                      <td className="px-6 py-4">
+                        <span className="font-mono text-sm text-slate-300 bg-slate-900 px-2 py-1 rounded">
+                          {student.fingerprintId}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2">
+                          <span className={`w-2.5 h-2.5 rounded-full ${student.fingerprintStatus === "active" ? "bg-green-400" : "bg-red-400"}`}></span>
+                          <span className={`text-sm ${student.fingerprintStatus === "active" ? "text-green-400" : "text-red-400"}`}>
+                            {student.fingerprintStatus === "active" ? "Active" : "Inactive"}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <p className="text-slate-300 text-sm">{student.parentName || "—"}</p>
+                        <p className="text-slate-500 text-xs">{student.parentEmail || "—"}</p>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
         </div>
 
-        {/* Info Box */}
         <div className="mt-6 bg-slate-800 border border-slate-700 rounded-xl p-4 flex items-start gap-3">
           <span className="text-slate-400 text-xl mt-0.5">ℹ️</span>
           <div>
-            <p className="text-slate-300 font-medium text-sm">RFID Tag Assignment</p>
+            <p className="text-slate-300 font-medium text-sm">Fingerprint Assignment</p>
             <p className="text-slate-500 text-xs mt-0.5">
-              Each student is assigned a unique RFID tag number that links their physical card to their
-              school record. When the RC522 reader detects a card tap, it reads this tag number and
-              automatically records attendance in real time. To manage card status, visit the RFID Card Manager.
+              Each student is assigned a unique fingerprint ID that links their biometric scan to their
+              school record. When the fingerprint sensor detects a scan, it reads this ID and
+              automatically records attendance in real time. To manage fingerprint status, visit the Fingerprint Manager.
             </p>
           </div>
         </div>

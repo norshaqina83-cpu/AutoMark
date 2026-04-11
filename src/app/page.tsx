@@ -1,19 +1,30 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
 import AuthGuard from "@/components/AuthGuard";
-import { students, attendanceRecords, attendanceSettings } from "@/lib/data";
+import { getStoredStudents, getStoredAttendance, getStoredSettings, saveSettings, AttendanceSettings } from "@/lib/data";
 
 function AdminDashboardContent() {
+  const [students, setStudents] = useState<ReturnType<typeof getStoredStudents>>([]);
+  const [attendanceRecords, setAttendanceRecords] = useState<ReturnType<typeof getStoredAttendance>>([]);
+  const [settings, setSettings] = useState<AttendanceSettings>({ lateAfter: "07:00", absentAfter: "12:30" });
+
+  useEffect(() => {
+    setStudents(getStoredStudents());
+    setAttendanceRecords(getStoredAttendance());
+    const storedSettings = getStoredSettings();
+    if (storedSettings) setSettings(storedSettings);
+  }, []);
+
   const today = new Date().toISOString().split("T")[0];
   const todayRecords = attendanceRecords.filter((r) => r.date === today);
   const presentToday = todayRecords.filter((r) => r.status === "present").length;
   const lateToday = todayRecords.filter((r) => r.status === "late").length;
   const absentToday = todayRecords.filter((r) => r.status === "absent").length;
-  const activeCards = students.filter((s) => s.rfidStatus === "active").length;
-  const inactiveCards = students.filter((s) => s.rfidStatus === "inactive").length;
+  const activeCards = students.filter((s) => s.fingerprintStatus === "active").length;
+  const inactiveCards = students.filter((s) => s.fingerprintStatus === "inactive").length;
 
   const recentScans = attendanceRecords
     .filter((r) => r.time !== "")
@@ -24,24 +35,22 @@ function AdminDashboardContent() {
     })
     .slice(0, 5);
 
-  // Time settings state
-  const [lateAfter, setLateAfter] = useState(attendanceSettings.lateAfter);
-  const [absentAfter, setAbsentAfter] = useState(attendanceSettings.absentAfter);
+  const [lateAfter, setLateAfter] = useState(settings.lateAfter);
+  const [absentAfter, setAbsentAfter] = useState(settings.absentAfter);
   const [settingsSaved, setSettingsSaved] = useState(false);
   const [settingsError, setSettingsError] = useState("");
 
   const handleSaveSettings = () => {
     setSettingsError("");
-    // Validate: lateAfter must be before absentAfter
     const [lh, lm] = lateAfter.split(":").map(Number);
     const [ah, am] = absentAfter.split(":").map(Number);
     if (lh * 60 + lm >= ah * 60 + am) {
       setSettingsError("'Late after' time must be earlier than 'Absent after' time.");
       return;
     }
-    // Apply to the shared settings object (in-memory)
-    attendanceSettings.lateAfter = lateAfter;
-    attendanceSettings.absentAfter = absentAfter;
+    const newSettings = { lateAfter, absentAfter };
+    saveSettings(newSettings);
+    setSettings(newSettings);
     setSettingsSaved(true);
     setTimeout(() => setSettingsSaved(false), 3000);
   };
@@ -55,7 +64,7 @@ function AdminDashboardContent() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-white">System Dashboard</h1>
           <p className="text-slate-400 mt-1">
-            RFID Digital Attendance Management System — Real-time overview
+            Fingerprint Digital Attendance Management System — Real-time overview
           </p>
         </div>
 
@@ -76,7 +85,7 @@ function AdminDashboardContent() {
               <span className="text-2xl">⏰</span>
             </div>
             <p className="text-3xl font-bold text-yellow-400">{lateToday}</p>
-            <p className="text-slate-500 text-xs mt-1">arrived after {attendanceSettings.lateAfter}</p>
+            <p className="text-slate-500 text-xs mt-1">arrived after {settings.lateAfter}</p>
           </div>
 
           <div className="bg-slate-800 rounded-xl p-5 border border-slate-700">
@@ -104,7 +113,7 @@ function AdminDashboardContent() {
             <span>⏱️</span> Attendance Time Settings
           </h2>
           <p className="text-slate-400 text-sm mb-5">
-            Configure the cutoff times used to classify RFID scans as Present, Late, or Absent.
+            Configure the cutoff times used to classify fingerprint scans as Present, Late, or Absent.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
@@ -124,7 +133,7 @@ function AdminDashboardContent() {
                 className="w-full bg-slate-800 border border-slate-600 text-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-yellow-500 transition-colors"
               />
               <p className="text-slate-500 text-xs mt-2">
-                Current: <span className="text-yellow-400 font-mono">{attendanceSettings.lateAfter}</span>
+                Current: <span className="text-yellow-400 font-mono">{settings.lateAfter}</span>
               </p>
             </div>
 
@@ -144,7 +153,7 @@ function AdminDashboardContent() {
                 className="w-full bg-slate-800 border border-slate-600 text-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-red-500 transition-colors"
               />
               <p className="text-slate-500 text-xs mt-2">
-                Current: <span className="text-red-400 font-mono">{attendanceSettings.absentAfter}</span>
+                Current: <span className="text-red-400 font-mono">{settings.absentAfter}</span>
               </p>
             </div>
           </div>
@@ -191,25 +200,25 @@ function AdminDashboardContent() {
           </button>
         </div>
 
-        {/* RFID Card Status + Recent Scans */}
+        {/* Fingerprint Status + Recent Scans */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          {/* RFID Card Status */}
+          {/* Fingerprint Status */}
           <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
             <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              <span>💳</span> RFID Card Status
+              <span>👆</span> Fingerprint Status
             </h2>
             <div className="space-y-3">
               <div className="flex items-center justify-between p-3 bg-slate-900 rounded-lg">
                 <div className="flex items-center gap-3">
                   <span className="w-3 h-3 bg-green-400 rounded-full"></span>
-                  <span className="text-slate-300">Active Cards</span>
+                  <span className="text-slate-300">Active Enrolled</span>
                 </div>
                 <span className="text-green-400 font-bold text-lg">{activeCards}</span>
               </div>
               <div className="flex items-center justify-between p-3 bg-slate-900 rounded-lg">
                 <div className="flex items-center gap-3">
                   <span className="w-3 h-3 bg-red-400 rounded-full"></span>
-                  <span className="text-slate-300">Inactive / Lost</span>
+                  <span className="text-slate-300">Inactive</span>
                 </div>
                 <span className="text-red-400 font-bold text-lg">{inactiveCards}</span>
               </div>
@@ -225,14 +234,14 @@ function AdminDashboardContent() {
               href="/cards"
               className="mt-4 w-full flex items-center justify-center gap-2 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors"
             >
-              Manage RFID Cards →
+              Manage Fingerprints →
             </Link>
           </div>
 
           {/* Recent Scans */}
           <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
             <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              <span>📡</span> Recent RFID Scans
+              <span>👆</span> Recent Fingerprint Scans
             </h2>
             <div className="space-y-2">
               {recentScans.map((scan) => (
@@ -243,7 +252,7 @@ function AdminDashboardContent() {
                   <div>
                     <p className="text-white text-sm font-medium">{scan.studentName}</p>
                     <p className="text-slate-500 text-xs">
-                      {scan.rfidTag} · Class {scan.class}
+                      {scan.fingerprintId} · Class {scan.class}
                     </p>
                   </div>
                   <div className="text-right">
@@ -286,13 +295,13 @@ function AdminDashboardContent() {
             href="/cards"
             className="group bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-purple-500 rounded-xl p-6 transition-all"
           >
-            <div className="text-4xl mb-3">💳</div>
-            <h3 className="text-white font-semibold text-lg mb-1">RFID Card Manager</h3>
+            <div className="text-4xl mb-3">👆</div>
+            <h3 className="text-white font-semibold text-lg mb-1">Fingerprint Manager</h3>
             <p className="text-slate-400 text-sm">
-              Activate, deactivate, or renew student RFID cards. Handle lost cards.
+              Activate, deactivate, or re-enroll student fingerprints. Manage sensor access.
             </p>
             <span className="mt-3 inline-block text-purple-400 text-sm group-hover:translate-x-1 transition-transform">
-              Manage Cards →
+              Manage Fingerprints →
             </span>
           </Link>
 
@@ -313,12 +322,11 @@ function AdminDashboardContent() {
 
         {/* System Info Banner */}
         <div className="mt-6 bg-blue-950 border border-blue-800 rounded-xl p-4 flex items-start gap-3">
-          <span className="text-blue-400 text-xl mt-0.5">📡</span>
+          <span className="text-blue-400 text-xl mt-0.5">👆</span>
           <div>
-            <p className="text-blue-300 font-medium text-sm">RC522 RFID Reader — Connected</p>
+            <p className="text-blue-300 font-medium text-sm">Fingerprint Sensor — Connected</p>
             <p className="text-blue-400 text-xs mt-0.5">
-              The RFID scanner at the classroom entrance is online and transmitting attendance data in real time.
-              Green LED = successful scan &middot; Red LED = card inactive or error &middot; Buzzer = confirmation beep.
+              The fingerprint scanner at the classroom entrance is online and transmitting attendance data in real time.
             </p>
           </div>
         </div>

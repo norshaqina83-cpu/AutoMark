@@ -10,12 +10,12 @@ const NAV_LINKS_BY_ROLE: Record<UserRole, NavLink[]> = {
   admin: [
     { href: "/", label: "Dashboard", icon: "🏠" },
     { href: "/teacher", label: "Attendance", icon: "👩‍🏫" },
-    { href: "/cards", label: "RFID Cards", icon: "💳" },
+    { href: "/cards", label: "Fingerprints", icon: "👆" },
     { href: "/students", label: "Students", icon: "🎓" },
   ],
   teacher: [
     { href: "/teacher", label: "Attendance", icon: "👩‍🏫" },
-    { href: "/cards", label: "RFID Cards", icon: "💳" },
+    { href: "/cards", label: "Fingerprints", icon: "👆" },
     { href: "/students", label: "Students", icon: "🎓" },
   ],
   parent: [

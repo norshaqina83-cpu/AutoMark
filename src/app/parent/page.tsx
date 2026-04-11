@@ -166,15 +166,15 @@ function ParentPortalContent() {
                   {selectedStudent.studentId} · Class {selectedStudent.class}
                 </p>
                 <p className="text-slate-500 text-xs mt-0.5">
-                  RFID: {selectedStudent.rfidTag} ·{" "}
+                  Fingerprint: {selectedStudent.fingerprintId} ·{" "}
                   <span
                     className={
-                      selectedStudent.rfidStatus === "active"
+                      selectedStudent.fingerprintStatus === "active"
                         ? "text-green-400"
                         : "text-red-400"
                     }
                   >
-                    Card {selectedStudent.rfidStatus}
+                    {selectedStudent.fingerprintStatus.charAt(0).toUpperCase() + selectedStudent.fingerprintStatus.slice(1)}
                   </span>
                 </p>
               </div>
@@ -228,15 +228,15 @@ function ParentPortalContent() {
           </div>
         )}
 
-        {/* Inactive Card Alert */}
-        {selectedStudent.rfidStatus === "inactive" && (
+        {/* Inactive Fingerprint Alert */}
+        {selectedStudent.fingerprintStatus === "inactive" && (
           <div className="mb-6 p-4 bg-amber-950/50 border border-amber-700/50 rounded-xl flex items-start gap-3">
             <span className="text-amber-400 text-xl mt-0.5">⚠️</span>
             <div>
-              <p className="text-amber-300 font-medium">RFID Card Inactive</p>
+              <p className="text-amber-300 font-medium">Fingerprint Inactive</p>
               <p className="text-amber-400 text-sm mt-0.5">
-                Your child&apos;s RFID card has been deactivated. They will not be able to scan in until
-                a replacement card is issued. Please contact the school administration.
+                Your child&apos;s fingerprint sensor access has been deactivated. They will not be able to scan in until
+                re-enrolled. Please contact the school administration.
               </p>
             </div>
           </div>
