@@ -1,0 +1,125 @@
+[debug] [2026-04-11T09:19:26.356Z] [Firebase Plugin] Activating Firebase extension.
+[debug] [2026-04-11T09:19:27.827Z] [Firebase Plugin] requireAuthWrapper
+[debug] [2026-04-11T09:19:27.829Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-04-11T09:19:27.830Z] > authorizing via signed-in user (norshaqina83@gmail.com)
+[debug] [2026-04-11T09:19:27.834Z] Checked if tokens are valid: true, expires at: 1775902706642
+[debug] [2026-04-11T09:19:27.834Z] Checked if tokens are valid: true, expires at: 1775902706642
+[debug] [2026-04-11T09:19:27.834Z] [Firebase Plugin] User found:  norshaqina83@gmail.com
+[info] [Firebase Plugin] (Core:Project) New user detected, fetching projects
+[debug] [2026-04-11T09:19:27.836Z] Checked if tokens are valid: true, expires at: 1775902706642
+[debug] [2026-04-11T09:19:27.838Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects pageSize=1000
+[debug] [2026-04-11T09:19:27.872Z] [Firebase Plugin] VSCode notification server listening on port 40001
+[info] [Firebase Plugin] Starting Data Connect toolkit (version 3.3.1) on port 50001
+[info] i  dataconnect: downloading dataconnect-emulator-3.3.1... {"metadata":{"emulator":{"name":"dataconnect"},"message":"downloading dataconnect-emulator-3.3.1..."}}
+[debug] [2026-04-11T09:19:28.621Z] >>> [apiv2][query] GET https://storage.googleapis.com/firemat-preview-drop/emulator/dataconnect-emulator-linux-amd64-v3.3.1 
+[debug] [2026-04-11T09:19:28.692Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects 200
+[debug] [2026-04-11T09:19:28.695Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects [omitted]
+[debug] [2026-04-11T09:19:28.989Z] <<< [apiv2][status] GET https://storage.googleapis.com/firemat-preview-drop/emulator/dataconnect-emulator-linux-amd64-v3.3.1 200
+[debug] [2026-04-11T09:19:28.989Z] <<< [apiv2][body] GET https://storage.googleapis.com/firemat-preview-drop/emulator/dataconnect-emulator-linux-amd64-v3.3.1 [stream]
+[info] i  dataconnect: Removing outdated emulator files: dataconnect-emulator-3.2.1 {"metadata":{"emulator":{"name":"dataconnect"},"message":"Removing outdated emulator files: dataconnect-emulator-3.2.1"}}
+[debug] [2026-04-11T09:19:32.261Z] I0411 09:19:32.251970    8851 control.go:100] [projects/emulator/locations/emulator/services/automark-b3277-service 6618] UpdateResources(): done
+Main schema: sources: schema/schema.gql [1261B] 
+Connector "example": sources: 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0411 09:19:32.251970    8851 control.go:100] [projects/emulator/locations/emulator/services/automark-b3277-service 6618] UpdateResources(): done\nMain schema: sources: schema/schema.gql [1261B] \nConnector \"example\": sources: \n"}}
+[debug] [2026-04-11T09:19:32.262Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2026-04-11T09:19:32.263Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: port"}}
+[debug] [2026-04-11T09:19:32.263Z] Starting Data Connect Emulator with command {"binary":"/home/codespace/.cache/firebase/emulators/dataconnect-emulator-3.3.1","args":["--logtostderr","-v=2","dev","--listen=localhost:50001","--config_dir=/workspaces/AutoMark/dataconnect","--enable_output_schema_extensions=true","--enable_output_generated_sdk=true"],"optionalArgs":["listen","config_dir","enable_output_schema_extensions","enable_output_generated_sdk"],"joinArgs":true,"shell":false,"port":9399} {"metadata":{"emulator":{"name":"dataconnect"},"message":"Starting Data Connect Emulator with command {\"binary\":\"/home/codespace/.cache/firebase/emulators/dataconnect-emulator-3.3.1\",\"args\":[\"--logtostderr\",\"-v=2\",\"dev\",\"--listen=localhost:50001\",\"--config_dir=/workspaces/AutoMark/dataconnect\",\"--enable_output_schema_extensions=true\",\"--enable_output_generated_sdk=true\"],\"optionalArgs\":[\"listen\",\"config_dir\",\"enable_output_schema_extensions\",\"enable_output_generated_sdk\"],\"joinArgs\":true,\"shell\":false,\"port\":9399}"}}
+[info] i  dataconnect: Data Connect Emulator logging to dataconnect-debug.log {"metadata":{"emulator":{"name":"dataconnect"},"message":"Data Connect Emulator logging to dataconnect-debug.log"}}
+[debug] [2026-04-11T09:19:32.350Z] I0411 09:19:32.348471    8856 load.go:31] Reloading schema and connectors...
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0411 09:19:32.348471    8856 load.go:31] Reloading schema and connectors...\n"}}
+[debug] [2026-04-11T09:19:32.377Z] I0411 09:19:32.377301    8856 control.go:100] [projects/emulator/locations/emulator/services/automark-b3277-service ba34] UpdateResources(): done
+Main schema: sources: schema/schema.gql [1261B] 
+Connector "example": sources: 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0411 09:19:32.377301    8856 control.go:100] [projects/emulator/locations/emulator/services/automark-b3277-service ba34] UpdateResources(): done\nMain schema: sources: schema/schema.gql [1261B] \nConnector \"example\": sources: \n"}}
+[debug] [2026-04-11T09:19:32.400Z] E0411 09:19:32.400222    8856 load.go:95] Errors generating SDK: [connector "example"]: invalid Data Connect Connector no query found in connector
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"E0411 09:19:32.400222    8856 load.go:95] Errors generating SDK: [connector \"example\"]: invalid Data Connect Connector no query found in connector\n"}}
+[debug] [2026-04-11T09:19:32.404Z] I0411 09:19:32.404149    8856 collector.go:107] schema extensions wrote into "/workspaces/AutoMark/dataconnect/.dataconnect/schema"
+Generated sources: main/implicit.gql [5118B] prelude.gql [80888B] main/input.gql [86027B] main/relation.gql [42286B] main/query.gql [10401B] main/mutation.gql [28275B] 
+I0411 09:19:32.404187    8856 load.go:109] Finished reloading
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0411 09:19:32.404149    8856 collector.go:107] schema extensions wrote into \"/workspaces/AutoMark/dataconnect/.dataconnect/schema\"\nGenerated sources: main/implicit.gql [5118B] prelude.gql [80888B] main/input.gql [86027B] main/relation.gql [42286B] main/query.gql [10401B] main/mutation.gql [28275B] \nI0411 09:19:32.404187    8856 load.go:109] Finished reloading\n"}}
+[debug] [2026-04-11T09:19:32.406Z] I0411 09:19:32.404751    8856 dev.go:104] Listening on address (HTTP + gRPC): 127.0.0.1:50001
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0411 09:19:32.404751    8856 dev.go:104] Listening on address (HTTP + gRPC): 127.0.0.1:50001\n"}}
+[debug] [2026-04-11T09:19:32.527Z] I0411 09:19:32.527022    8856 engine.go:209] [projects/emulator/locations/emulator/services/automark-b3277-service ba34] ExecuteGraphqlRead query IntrospectionQuery: succeeded. 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0411 09:19:32.527022    8856 engine.go:209] [projects/emulator/locations/emulator/services/automark-b3277-service ba34] ExecuteGraphqlRead query IntrospectionQuery: succeeded. \n"}}
+[debug] [2026-04-11T09:24:42.408Z] I0411 09:24:42.407991    8856 load.go:31] Reloading schema and connectors...
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0411 09:24:42.407991    8856 load.go:31] Reloading schema and connectors...\n"}}
+[debug] [2026-04-11T09:24:42.425Z] I0411 09:24:42.425387    8856 control.go:100] [projects/emulator/locations/emulator/services/automark-b3277-service 43ef] UpdateResources(): done
+Main schema: sources: schema/schema.gql [1261B] 
+Connector "example": sources: 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0411 09:24:42.425387    8856 control.go:100] [projects/emulator/locations/emulator/services/automark-b3277-service 43ef] UpdateResources(): done\nMain schema: sources: schema/schema.gql [1261B] \nConnector \"example\": sources: \n"}}
+[debug] [2026-04-11T09:24:42.443Z] E0411 09:24:42.443806    8856 load.go:95] Errors generating SDK: [connector "example"]: invalid Data Connect Connector no query found in connector
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"E0411 09:24:42.443806    8856 load.go:95] Errors generating SDK: [connector \"example\"]: invalid Data Connect Connector no query found in connector\n"}}
+[debug] [2026-04-11T09:24:42.446Z] I0411 09:24:42.446012    8856 collector.go:107] schema extensions wrote into "/workspaces/AutoMark/dataconnect/.dataconnect/schema"
+Generated sources: prelude.gql [80888B] main/implicit.gql [5118B] main/input.gql [86027B] main/relation.gql [42286B] main/query.gql [10401B] main/mutation.gql [28275B] 
+I0411 09:24:42.446030    8856 load.go:109] Finished reloading
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0411 09:24:42.446012    8856 collector.go:107] schema extensions wrote into \"/workspaces/AutoMark/dataconnect/.dataconnect/schema\"\nGenerated sources: prelude.gql [80888B] main/implicit.gql [5118B] main/input.gql [86027B] main/relation.gql [42286B] main/query.gql [10401B] main/mutation.gql [28275B] \nI0411 09:24:42.446030    8856 load.go:109] Finished reloading\n"}}
+[info] [Firebase Plugin] Stopping Data Connect toolkit
+[warn] ⚠  Data Connect Emulator has exited upon receiving signal: SIGINT 
+[debug] [2026-04-11T09:28:01.271Z] [Firebase Plugin] Activating Firebase extension.
+[info] [Firebase Plugin] Checked firebase-tools, is up to date!
+[debug] [2026-04-11T09:28:05.402Z] [Firebase Plugin] requireAuthWrapper
+[debug] [2026-04-11T09:28:05.404Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-04-11T09:28:05.405Z] > authorizing via signed-in user (norshaqina83@gmail.com)
+[debug] [2026-04-11T09:28:05.409Z] Checked if tokens are valid: true, expires at: 1775902706642
+[debug] [2026-04-11T09:28:05.409Z] Checked if tokens are valid: true, expires at: 1775902706642
+[debug] [2026-04-11T09:28:05.409Z] [Firebase Plugin] User found:  norshaqina83@gmail.com
+[info] [Firebase Plugin] (Core:Project) New user detected, fetching projects
+[debug] [2026-04-11T09:28:05.412Z] Checked if tokens are valid: true, expires at: 1775902706642
+[debug] [2026-04-11T09:28:05.414Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects pageSize=1000
+[debug] [2026-04-11T09:28:05.472Z] [Firebase Plugin] VSCode notification server listening on port 40001
+[debug] [2026-04-11T09:28:06.211Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects 200
+[debug] [2026-04-11T09:28:06.211Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects [omitted]
+[info] [Firebase Plugin] Starting Data Connect toolkit (version 3.3.1) on port 50001
+[info] i  dataconnect: downloading dataconnect-emulator-3.3.1... {"metadata":{"emulator":{"name":"dataconnect"},"message":"downloading dataconnect-emulator-3.3.1..."}}
+[debug] [2026-04-11T09:28:06.724Z] >>> [apiv2][query] GET https://storage.googleapis.com/firemat-preview-drop/emulator/dataconnect-emulator-linux-amd64-v3.3.1 
+[debug] [2026-04-11T09:28:07.522Z] <<< [apiv2][status] GET https://storage.googleapis.com/firemat-preview-drop/emulator/dataconnect-emulator-linux-amd64-v3.3.1 200
+[debug] [2026-04-11T09:28:07.524Z] <<< [apiv2][body] GET https://storage.googleapis.com/firemat-preview-drop/emulator/dataconnect-emulator-linux-amd64-v3.3.1 [stream]
+[info] i  dataconnect: Removing outdated emulator files: dataconnect-emulator-3.4.1 {"metadata":{"emulator":{"name":"dataconnect"},"message":"Removing outdated emulator files: dataconnect-emulator-3.4.1"}}
+[debug] [2026-04-11T09:28:11.711Z] I0411 09:28:11.702989   14469 control.go:100] [projects/emulator/locations/emulator/services/automark-b3277-service 3832] UpdateResources(): done
+Main schema: sources: schema/schema.gql [1261B] 
+Connector "example": sources: 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0411 09:28:11.702989   14469 control.go:100] [projects/emulator/locations/emulator/services/automark-b3277-service 3832] UpdateResources(): done\nMain schema: sources: schema/schema.gql [1261B] \nConnector \"example\": sources: \n"}}
+[debug] [2026-04-11T09:28:11.712Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2026-04-11T09:28:11.713Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: port"}}
+[debug] [2026-04-11T09:28:11.713Z] Starting Data Connect Emulator with command {"binary":"/home/codespace/.cache/firebase/emulators/dataconnect-emulator-3.3.1","args":["--logtostderr","-v=2","dev","--listen=localhost:50001","--config_dir=/workspaces/AutoMark/dataconnect","--enable_output_schema_extensions=true","--enable_output_generated_sdk=true"],"optionalArgs":["listen","config_dir","enable_output_schema_extensions","enable_output_generated_sdk"],"joinArgs":true,"shell":false,"port":9399} {"metadata":{"emulator":{"name":"dataconnect"},"message":"Starting Data Connect Emulator with command {\"binary\":\"/home/codespace/.cache/firebase/emulators/dataconnect-emulator-3.3.1\",\"args\":[\"--logtostderr\",\"-v=2\",\"dev\",\"--listen=localhost:50001\",\"--config_dir=/workspaces/AutoMark/dataconnect\",\"--enable_output_schema_extensions=true\",\"--enable_output_generated_sdk=true\"],\"optionalArgs\":[\"listen\",\"config_dir\",\"enable_output_schema_extensions\",\"enable_output_generated_sdk\"],\"joinArgs\":true,\"shell\":false,\"port\":9399}"}}
+[info] i  dataconnect: Data Connect Emulator logging to dataconnect-debug.log {"metadata":{"emulator":{"name":"dataconnect"},"message":"Data Connect Emulator logging to dataconnect-debug.log"}}
+[debug] [2026-04-11T09:28:11.753Z] I0411 09:28:11.753489   14475 load.go:31] Reloading schema and connectors...
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0411 09:28:11.753489   14475 load.go:31] Reloading schema and connectors...\n"}}
+[debug] [2026-04-11T09:28:11.774Z] I0411 09:28:11.774712   14475 control.go:100] [projects/emulator/locations/emulator/services/automark-b3277-service cba8] UpdateResources(): done
+Main schema: sources: schema/schema.gql [1261B] 
+Connector "example": sources: 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0411 09:28:11.774712   14475 control.go:100] [projects/emulator/locations/emulator/services/automark-b3277-service cba8] UpdateResources(): done\nMain schema: sources: schema/schema.gql [1261B] \nConnector \"example\": sources: \n"}}
+[debug] [2026-04-11T09:28:11.801Z] E0411 09:28:11.801510   14475 load.go:95] Errors generating SDK: [connector "example"]: invalid Data Connect Connector no query found in connector
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"E0411 09:28:11.801510   14475 load.go:95] Errors generating SDK: [connector \"example\"]: invalid Data Connect Connector no query found in connector\n"}}
+[debug] [2026-04-11T09:28:11.809Z] I0411 09:28:11.804185   14475 collector.go:107] schema extensions wrote into "/workspaces/AutoMark/dataconnect/.dataconnect/schema"
+Generated sources: main/relation.gql [42286B] main/query.gql [10401B] main/mutation.gql [28275B] prelude.gql [80888B] main/implicit.gql [5118B] main/input.gql [86027B] 
+I0411 09:28:11.804219   14475 load.go:109] Finished reloading
+I0411 09:28:11.804751   14475 dev.go:104] Listening on address (HTTP + gRPC): 127.0.0.1:50001
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0411 09:28:11.804185   14475 collector.go:107] schema extensions wrote into \"/workspaces/AutoMark/dataconnect/.dataconnect/schema\"\nGenerated sources: main/relation.gql [42286B] main/query.gql [10401B] main/mutation.gql [28275B] prelude.gql [80888B] main/implicit.gql [5118B] main/input.gql [86027B] \nI0411 09:28:11.804219   14475 load.go:109] Finished reloading\nI0411 09:28:11.804751   14475 dev.go:104] Listening on address (HTTP + gRPC): 127.0.0.1:50001\n"}}
+[debug] [2026-04-11T09:28:11.981Z] I0411 09:28:11.981540   14475 engine.go:209] [projects/emulator/locations/emulator/services/automark-b3277-service cba8] ExecuteGraphqlRead query IntrospectionQuery: succeeded. 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0411 09:28:11.981540   14475 engine.go:209] [projects/emulator/locations/emulator/services/automark-b3277-service cba8] ExecuteGraphqlRead query IntrospectionQuery: succeeded. \n"}}
+[debug] [2026-04-11T09:28:24.164Z] [Firebase Plugin] Value of process.env.MONOSPACE_ENV: undefined
+[debug] [2026-04-11T09:28:24.164Z] [Firebase Plugin] requireAuthWrapper
+[debug] [2026-04-11T09:28:24.165Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-04-11T09:28:24.165Z] > authorizing via signed-in user (norshaqina83@gmail.com)
+[debug] [2026-04-11T09:28:24.166Z] Checked if tokens are valid: true, expires at: 1775902706642
+[debug] [2026-04-11T09:28:24.166Z] [Firebase Plugin] User found:  norshaqina83@gmail.com
+[info] [Firebase Plugin] (Core:Project) New user detected, fetching projects
+[debug] [2026-04-11T09:28:24.167Z] Checked if tokens are valid: true, expires at: 1775902706642
+[debug] [2026-04-11T09:28:24.167Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects pageSize=1000
+[debug] [2026-04-11T09:28:24.197Z] [Firebase Plugin] Value of process.env.MONOSPACE_ENV: undefined
+[debug] [2026-04-11T09:28:24.197Z] [Firebase Plugin] requireAuthWrapper
+[debug] [2026-04-11T09:28:24.198Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-04-11T09:28:24.198Z] > authorizing via signed-in user (norshaqina83@gmail.com)
+[debug] [2026-04-11T09:28:24.199Z] Checked if tokens are valid: true, expires at: 1775902706642
+[debug] [2026-04-11T09:28:24.199Z] [Firebase Plugin] User found:  norshaqina83@gmail.com
+[info] [Firebase Plugin] (Core:Project) New user detected, fetching projects
+[debug] [2026-04-11T09:28:24.200Z] Checked if tokens are valid: true, expires at: 1775902706642
+[debug] [2026-04-11T09:28:24.201Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects pageSize=1000
+[debug] [2026-04-11T09:28:24.819Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects 200
+[debug] [2026-04-11T09:28:24.819Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects [omitted]
+[debug] [2026-04-11T09:28:25.002Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects 200
+[debug] [2026-04-11T09:28:25.002Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects [omitted]
+[info] ✔  Wrote .gemini/extensions/firebase/gemini-extension.json 
+[info] ✔  Wrote .gemini/extensions/firebase/contexts/FIREBASE-BASE.md 
+[info] ✔  Wrote .gemini/extensions/firebase/FIREBASE.md 

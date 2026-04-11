@@ -1,0 +1,898 @@
+extend type Mutation {
+  """
+  ✨ Insert a single `Attendance` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  attendance_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: Attendance_Data!
+  ): Attendance_KeyOutput! @fdc_generated(from: "Attendance", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `AttendanceSetting` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  attendanceSetting_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: AttendanceSetting_Data!
+  ): AttendanceSetting_KeyOutput! @fdc_generated(from: "AttendanceSetting", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `Class` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  class_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: Class_Data!
+  ): Class_KeyOutput! @fdc_generated(from: "Class", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `Enrollment` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  enrollment_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: Enrollment_Data!
+  ): Enrollment_KeyOutput! @fdc_generated(from: "Enrollment", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `ParentNotification` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  parentNotification_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: ParentNotification_Data!
+  ): ParentNotification_KeyOutput! @fdc_generated(from: "ParentNotification", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `RewardClaim` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  rewardClaim_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: RewardClaim_Data!
+  ): RewardClaim_KeyOutput! @fdc_generated(from: "RewardClaim", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `Session` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  session_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: Session_Data!
+  ): Session_KeyOutput! @fdc_generated(from: "Session", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `User` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  user_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: User_Data!
+  ): User_KeyOutput! @fdc_generated(from: "User", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert `Attendance` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  attendance_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [Attendance_Data!]!
+  ): [Attendance_KeyOutput!]! @fdc_generated(from: "Attendance", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `AttendanceSetting` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  attendanceSetting_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [AttendanceSetting_Data!]!
+  ): [AttendanceSetting_KeyOutput!]! @fdc_generated(from: "AttendanceSetting", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `Class` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  class_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [Class_Data!]!
+  ): [Class_KeyOutput!]! @fdc_generated(from: "Class", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `Enrollment` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  enrollment_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [Enrollment_Data!]!
+  ): [Enrollment_KeyOutput!]! @fdc_generated(from: "Enrollment", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `ParentNotification` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  parentNotification_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [ParentNotification_Data!]!
+  ): [ParentNotification_KeyOutput!]! @fdc_generated(from: "ParentNotification", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `RewardClaim` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  rewardClaim_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [RewardClaim_Data!]!
+  ): [RewardClaim_KeyOutput!]! @fdc_generated(from: "RewardClaim", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `Session` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  session_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [Session_Data!]!
+  ): [Session_KeyOutput!]! @fdc_generated(from: "Session", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `User` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  user_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [User_Data!]!
+  ): [User_KeyOutput!]! @fdc_generated(from: "User", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert or update a single `Attendance` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Attendance`.
+  """
+  attendance_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: Attendance_Data!
+  ): Attendance_KeyOutput! @fdc_generated(from: "Attendance", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `AttendanceSetting` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `AttendanceSetting`.
+  """
+  attendanceSetting_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: AttendanceSetting_Data!
+  ): AttendanceSetting_KeyOutput! @fdc_generated(from: "AttendanceSetting", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `Class` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Class`.
+  """
+  class_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: Class_Data!
+  ): Class_KeyOutput! @fdc_generated(from: "Class", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `Enrollment` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Enrollment`.
+  """
+  enrollment_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: Enrollment_Data!
+  ): Enrollment_KeyOutput! @fdc_generated(from: "Enrollment", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `ParentNotification` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `ParentNotification`.
+  """
+  parentNotification_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: ParentNotification_Data!
+  ): ParentNotification_KeyOutput! @fdc_generated(from: "ParentNotification", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `RewardClaim` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `RewardClaim`.
+  """
+  rewardClaim_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: RewardClaim_Data!
+  ): RewardClaim_KeyOutput! @fdc_generated(from: "RewardClaim", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `Session` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Session`.
+  """
+  session_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: Session_Data!
+  ): Session_KeyOutput! @fdc_generated(from: "Session", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `User` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `User`.
+  """
+  user_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: User_Data!
+  ): User_KeyOutput! @fdc_generated(from: "User", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update `Attendance` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Attendance`.
+  """
+  attendance_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [Attendance_Data!]!
+  ): [Attendance_KeyOutput!]! @fdc_generated(from: "Attendance", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `AttendanceSetting` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `AttendanceSetting`.
+  """
+  attendanceSetting_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [AttendanceSetting_Data!]!
+  ): [AttendanceSetting_KeyOutput!]! @fdc_generated(from: "AttendanceSetting", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `Class` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Class`.
+  """
+  class_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [Class_Data!]!
+  ): [Class_KeyOutput!]! @fdc_generated(from: "Class", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `Enrollment` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Enrollment`.
+  """
+  enrollment_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [Enrollment_Data!]!
+  ): [Enrollment_KeyOutput!]! @fdc_generated(from: "Enrollment", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `ParentNotification` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `ParentNotification`.
+  """
+  parentNotification_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [ParentNotification_Data!]!
+  ): [ParentNotification_KeyOutput!]! @fdc_generated(from: "ParentNotification", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `RewardClaim` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `RewardClaim`.
+  """
+  rewardClaim_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [RewardClaim_Data!]!
+  ): [RewardClaim_KeyOutput!]! @fdc_generated(from: "RewardClaim", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `Session` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Session`.
+  """
+  session_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [Session_Data!]!
+  ): [Session_KeyOutput!]! @fdc_generated(from: "Session", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `User` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `User`.
+  """
+  user_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [User_Data!]!
+  ): [User_KeyOutput!]! @fdc_generated(from: "User", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Update a single `Attendance` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Attendance` or `null` if not found.
+  """
+  attendance_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Attendance_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Attendance_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: Attendance_Data!
+  ): Attendance_KeyOutput @fdc_generated(from: "Attendance", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `AttendanceSetting` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `AttendanceSetting` or `null` if not found.
+  """
+  attendanceSetting_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: AttendanceSetting_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: AttendanceSetting_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: AttendanceSetting_Data!
+  ): AttendanceSetting_KeyOutput @fdc_generated(from: "AttendanceSetting", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `Class` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Class` or `null` if not found.
+  """
+  class_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Class_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Class_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: Class_Data!
+  ): Class_KeyOutput @fdc_generated(from: "Class", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `Enrollment` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Enrollment` or `null` if not found.
+  """
+  enrollment_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Enrollment_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Enrollment_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: Enrollment_Data!
+  ): Enrollment_KeyOutput @fdc_generated(from: "Enrollment", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `ParentNotification` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `ParentNotification` or `null` if not found.
+  """
+  parentNotification_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: ParentNotification_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: ParentNotification_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: ParentNotification_Data!
+  ): ParentNotification_KeyOutput @fdc_generated(from: "ParentNotification", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `RewardClaim` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `RewardClaim` or `null` if not found.
+  """
+  rewardClaim_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: RewardClaim_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: RewardClaim_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: RewardClaim_Data!
+  ): RewardClaim_KeyOutput @fdc_generated(from: "RewardClaim", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `Session` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Session` or `null` if not found.
+  """
+  session_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Session_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Session_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: Session_Data!
+  ): Session_KeyOutput @fdc_generated(from: "Session", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `User` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `User` or `null` if not found.
+  """
+  user_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: User_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: User_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: User_Data!
+  ): User_KeyOutput @fdc_generated(from: "User", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update `Attendance` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  attendance_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: Attendance_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: Attendance_Data!
+  ): Int! @fdc_generated(from: "Attendance", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `AttendanceSetting` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  attendanceSetting_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: AttendanceSetting_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: AttendanceSetting_Data!
+  ): Int! @fdc_generated(from: "AttendanceSetting", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `Class` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  class_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: Class_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: Class_Data!
+  ): Int! @fdc_generated(from: "Class", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `Enrollment` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  enrollment_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: Enrollment_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: Enrollment_Data!
+  ): Int! @fdc_generated(from: "Enrollment", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `ParentNotification` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  parentNotification_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: ParentNotification_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: ParentNotification_Data!
+  ): Int! @fdc_generated(from: "ParentNotification", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `RewardClaim` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  rewardClaim_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: RewardClaim_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: RewardClaim_Data!
+  ): Int! @fdc_generated(from: "RewardClaim", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `Session` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  session_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: Session_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: Session_Data!
+  ): Int! @fdc_generated(from: "Session", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `User` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  user_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: User_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: User_Data!
+  ): Int! @fdc_generated(from: "User", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Delete a single `Attendance` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  attendance_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Attendance_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Attendance_FirstRow
+  ): Attendance_KeyOutput @fdc_generated(from: "Attendance", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `AttendanceSetting` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  attendanceSetting_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: AttendanceSetting_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: AttendanceSetting_FirstRow
+  ): AttendanceSetting_KeyOutput @fdc_generated(from: "AttendanceSetting", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `Class` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  class_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Class_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Class_FirstRow
+  ): Class_KeyOutput @fdc_generated(from: "Class", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `Enrollment` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  enrollment_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Enrollment_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Enrollment_FirstRow
+  ): Enrollment_KeyOutput @fdc_generated(from: "Enrollment", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `ParentNotification` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  parentNotification_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: ParentNotification_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: ParentNotification_FirstRow
+  ): ParentNotification_KeyOutput @fdc_generated(from: "ParentNotification", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `RewardClaim` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  rewardClaim_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: RewardClaim_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: RewardClaim_FirstRow
+  ): RewardClaim_KeyOutput @fdc_generated(from: "RewardClaim", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `Session` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  session_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Session_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Session_FirstRow
+  ): Session_KeyOutput @fdc_generated(from: "Session", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `User` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  user_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: User_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: User_FirstRow
+  ): User_KeyOutput @fdc_generated(from: "User", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete `Attendance` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  attendance_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: Attendance_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "Attendance", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `AttendanceSetting` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  attendanceSetting_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: AttendanceSetting_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "AttendanceSetting", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `Class` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  class_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: Class_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "Class", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `Enrollment` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  enrollment_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: Enrollment_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "Enrollment", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `ParentNotification` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  parentNotification_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: ParentNotification_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "ParentNotification", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `RewardClaim` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  rewardClaim_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: RewardClaim_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "RewardClaim", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `Session` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  session_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: Session_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "Session", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `User` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  user_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: User_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "User", purpose: DELETE_MULTIPLE)
+}

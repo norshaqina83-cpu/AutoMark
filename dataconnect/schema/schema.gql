@@ -1,0 +1,74 @@
+type User @table {
+  username: String!
+  passwordHash: String!
+  role: String!
+  createdAt: Timestamp!
+  firstName: String
+  lastName: String
+  email: String
+  fingerprintId: String
+  parentEmail: String
+  parentName: String
+}
+
+type Class @table {
+  name: String!
+  code: String!
+  createdAt: Timestamp!
+  description: String
+  teacher: User
+}
+
+type Enrollment @table {
+  student: User!
+  class: Class!
+  enrollmentDate: Date!
+  createdAt: Timestamp!
+}
+
+type Session @table {
+  sessionDate: Date!
+  startTime: String!
+  endTime: String!
+  createdAt: Timestamp!
+  class: Class!
+}
+
+type Attendance @table {
+  student: User!
+  session: Session!
+  status: String!
+  markedAt: Timestamp!
+  createdAt: Timestamp!
+  markedBy: String
+  absentReason: String
+  teacherNote: String
+  truancyNotified: Boolean
+  correctedBy: User
+}
+
+type AttendanceSetting @table {
+  lateAfter: String!
+  absentAfter: String!
+  createdAt: Timestamp!
+  class: Class
+  teacher: User
+}
+
+type RewardClaim @table {
+  student: User!
+  streakAtClaim: Int!
+  claimedAt: Timestamp!
+  rewardReceived: Boolean!
+  receivedAt: Timestamp
+  teacherNote: String
+}
+
+type ParentNotification @table {
+  student: User!
+  date: Date!
+  message: String!
+  read: Boolean!
+  createdAt: Timestamp!
+  sender: User
+}

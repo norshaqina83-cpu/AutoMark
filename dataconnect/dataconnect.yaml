@@ -1,0 +1,13 @@
+specVersion: "v1"
+serviceId: "automark-b3277-service"
+location: "asia-southeast1"
+schemas:
+  - source: "./schema"
+    datasource:
+      postgresql:
+        database: "automark-b3277-database"
+        cloudSql:
+          instanceId: "automark-b3277-instance"
+          # schemaValidation: "STRICT"     # STRICT mode makes Postgres schema match Data Connect exactly.
+          # schemaValidation: "COMPATIBLE" # COMPATIBLE mode makes Postgres schema compatible with Data Connect.
+connectorDirs: ["./example"]

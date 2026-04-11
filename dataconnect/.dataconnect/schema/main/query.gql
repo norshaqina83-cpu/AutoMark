@@ -1,0 +1,426 @@
+extend type Query {
+  """
+  ✨ Look up a single `Attendance` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  attendance(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Attendance_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Attendance_FirstRow
+  ): Attendance @fdc_generated(from: "Attendance", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `AttendanceSetting` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  attendanceSetting(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: AttendanceSetting_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: AttendanceSetting_FirstRow
+  ): AttendanceSetting @fdc_generated(from: "AttendanceSetting", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `Class` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  class(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Class_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Class_FirstRow
+  ): Class @fdc_generated(from: "Class", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `Enrollment` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  enrollment(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Enrollment_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Enrollment_FirstRow
+  ): Enrollment @fdc_generated(from: "Enrollment", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `ParentNotification` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  parentNotification(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: ParentNotification_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: ParentNotification_FirstRow
+  ): ParentNotification @fdc_generated(from: "ParentNotification", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `RewardClaim` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  rewardClaim(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: RewardClaim_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: RewardClaim_FirstRow
+  ): RewardClaim @fdc_generated(from: "RewardClaim", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `Session` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  session(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Session_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Session_FirstRow
+  ): Session @fdc_generated(from: "Session", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `User` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  user(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: User_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: User_FirstRow
+  ): User @fdc_generated(from: "User", purpose: QUERY_SINGLE)
+  """
+  ✨ List `Attendance` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  attendances(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Attendance_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Attendance_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Attendance_Having
+  ): [Attendance!]! @fdc_generated(from: "Attendance", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `AttendanceSetting` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  attendanceSettings(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: AttendanceSetting_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [AttendanceSetting_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: AttendanceSetting_Having
+  ): [AttendanceSetting!]! @fdc_generated(from: "AttendanceSetting", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `Class` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  classes(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Class_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Class_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Class_Having
+  ): [Class!]! @fdc_generated(from: "Class", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `Enrollment` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  enrollments(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Enrollment_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Enrollment_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Enrollment_Having
+  ): [Enrollment!]! @fdc_generated(from: "Enrollment", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `ParentNotification` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  parentNotifications(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: ParentNotification_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [ParentNotification_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: ParentNotification_Having
+  ): [ParentNotification!]! @fdc_generated(from: "ParentNotification", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `RewardClaim` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  rewardClaims(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: RewardClaim_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [RewardClaim_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: RewardClaim_Having
+  ): [RewardClaim!]! @fdc_generated(from: "RewardClaim", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `Session` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  sessions(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Session_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Session_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Session_Having
+  ): [Session!]! @fdc_generated(from: "Session", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `User` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  users(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: User_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [User_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: User_Having
+  ): [User!]! @fdc_generated(from: "User", purpose: QUERY_MULTIPLE)
+}
