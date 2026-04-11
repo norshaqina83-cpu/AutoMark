@@ -241,3 +241,6 @@ Issues? Report them at https://github.com/firebase/firebase-tools/issues and att
 [debug] [2026-04-11T11:22:11.107Z] Postgres client disconnected
 [debug] [2026-04-11T11:29:19.476Z] Postgres client disconnected
 [debug] [2026-04-11T11:30:22.121Z] Postgres client disconnected
+[info] i  emulators: Received export request. Exporting data to ./exportedData. 
+[debug] [2026-04-11T11:32:07.023Z] hubExport: swapping firebase-export-1775907122412dH5sw1 with ./exportedData
+[info] ✔  emulators: Export complete. 
