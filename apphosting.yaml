@@ -10,11 +10,11 @@ runConfig:
 # Environment variables and secrets.
 env:
   - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
-    value: your-project-id
+    value: automark-b3277
   - variable: NEXT_PUBLIC_FIREBASE_API_KEY
-    value: your-api-key
+    value: AIzaSyA3p1DwnUDefu2rDG5-bDY-BxNbJTLCzXY
   - variable: FIREBASE_CONFIG
-    value: '{"projectId":"your-project-id"}'
+    value: '{"AutoMark":"automark-b3277"}'
     availability:
       - RUNTIME
 
