@@ -1,0 +1,15 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Check if the user is logged in
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Simple rule: Authenticated users can read/write everything.
+    // You should refine this to check roles (e.g., isAdmin) later.
+    match /{document=**} {
+      allow read, write: if isAuthenticated();
+    }
+  }
+}
