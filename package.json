@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "emulators": "firebase emulators:start"
+    "emulators": "firebase emulators:start --project automark-b3277"
   },
   "dependencies": {
     "@firebase/data-connect": "^0.6.0",
@@ -25,7 +25,7 @@
     "@types/react-dom": "^19.2.3",
     "eslint": "^9.39.1",
     "eslint-config-next": "^16.0.0",
-    "firebase-tools": "^15.14.0",
+    "firebase-tools": "^13.31.1",
     "tailwindcss": "^4.1.17",
     "typescript": "^5.9.3"
   },
