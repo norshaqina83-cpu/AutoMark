@@ -31,18 +31,6 @@
     "eslint-config-next": "^16.0.0",
     "tailwindcss": "^4.1.17",
     "typescript": "^5.9.3"
-  }
-}
-
-{
-  "name": "automark",
-  "version": "0.1.0",
-  "dependencies": {
-    "drizzle-orm": "^0.45.2",
-    "firebase-admin": "^13.0.0"
-  },
-  "devDependencies": {
-    "drizzle-kit": "^0.31.10"
   },
   "overrides": {
     "esbuild": "0.25.12",
