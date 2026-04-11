@@ -1,6 +1,7 @@
 'use server';
 
 import { adminDb } from '@/lib/firebaseAdmin';
+import { Timestamp } from 'firebase-admin/firestore';
 import { revalidatePath } from 'next/cache';
 import { Student } from '../../database';
 
@@ -11,7 +12,7 @@ export async function createStudent(data: Omit<Student, 'id'>) {
   try {
     const docRef = await adminDb.collection('students').add({
       ...data,
-      createdAt: new Date().toISOString(),
+      createdAt: Timestamp.now(),
     });
 
     revalidatePath('/students');
